@@ -1,0 +1,16 @@
+{
+  "format": "agent-runtime.experiment-definitions",
+  "version": 1,
+  "definitions": [
+    {
+      "id": "zenith-vision.contract-smoke",
+      "display_name": "Zenith Vision contract smoke",
+      "description": "Verify the fixed experiment entrypoint and telemetry-authority invariant.",
+      "repository_root": "/home/USER/github/zenith-vision",
+      "executable": "/home/USER/github/zenith-vision/scripts/run-experiment",
+      "args": ["contract_smoke"],
+      "environment": {},
+      "timeout_seconds": 30
+    }
+  ]
+}

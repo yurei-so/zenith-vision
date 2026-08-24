@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zenith-vision"
+version = "0.1.0.dev0"
+description = "Experiment-first perception and telemetry fusion for Guild Wars 2"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Yūrei.so" }]
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
