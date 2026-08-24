@@ -11,6 +11,16 @@
       "args": ["contract_smoke"],
       "environment": {},
       "timeout_seconds": 30
+    },
+    {
+      "id": "zenith-vision.ui-layout-baseline",
+      "display_name": "Zenith Vision UI layout baseline",
+      "description": "Evaluate deterministic default-HUD crop proposals on committed synthetic labels.",
+      "repository_root": "/home/USER/github/zenith-vision",
+      "executable": "/home/USER/github/zenith-vision/scripts/run-experiment",
+      "args": ["ui_layout_baseline"],
+      "environment": {},
+      "timeout_seconds": 30
     }
   ]
 }

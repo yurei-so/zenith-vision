@@ -6,7 +6,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPERIMENTS = {"contract_smoke": ROOT / "experiments" / "contract_smoke" / "run.py"}
+EXPERIMENTS = {
+    "contract_smoke": ROOT / "experiments" / "contract_smoke" / "run.py",
+    "ui_layout_baseline": ROOT / "experiments" / "ui_layout_baseline" / "run.py",
+}
 
 
 def main() -> int:

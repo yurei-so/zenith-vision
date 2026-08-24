@@ -11,7 +11,7 @@
 
 ## Perception experiments
 
-- [ ] Establish a deterministic UI-region baseline.
+- [x] Establish a deterministic UI-region baseline and overlap metrics.
 - [ ] Evaluate icon classification on held-out licensed/synthetic fixtures.
 - [ ] Add OCR only after redaction policy can be tested independently.
 - [ ] Measure latency and accuracy on the single 4070 through roostd.
