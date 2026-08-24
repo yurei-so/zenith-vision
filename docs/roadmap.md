@@ -7,7 +7,8 @@
 - [x] Add provenance-bearing visual observations.
 - [x] Add the fixed Agent Runtime experiment entrypoint.
 - [x] Add digest-bound dataset manifests and privacy intake checks.
-- [ ] Add an independently testable pixel/OCR redaction verifier.
+- [x] Add an independently testable reverse-reveal pixel boundary.
+- [ ] Add sensitive-text/OCR verification before allowing real captures.
 
 ## Perception experiments
 
