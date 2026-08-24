@@ -9,6 +9,10 @@ runner accepts only committed experiment identifiers and executes their fixed
 entrypoints. Results on standard output are bounded JSON; diagnostics go to
 standard error.
 
+The runner executes through the repository-owned `.venv` when installed. This
+keeps dependencies explicit under Agent Runtime's intentionally minimal process
+environment.
+
 `contract_smoke` is CPU-only and verifies wiring plus the authority invariant.
 Future GPU experiments must be registered as distinct, revision-bound
 definitions with fixed arguments and environment. A queued experiment may be

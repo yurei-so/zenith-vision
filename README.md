@@ -19,9 +19,14 @@ fail-closed fusion policy without downloading a model or reading a screen.
 ## Run locally
 
 ```bash
+python3 -m venv .venv
+.venv/bin/pip install -e .
 python3 -m unittest discover -s tests -v
 ./scripts/run-experiment contract_smoke
 ```
+
+The fixed runner prefers `.venv/bin/python` when present so Agent Runtime uses
+the repository's declared dependencies rather than ambient system packages.
 
 See [docs/architecture.md](docs/architecture.md),
 [docs/data-policy.md](docs/data-policy.md), and
