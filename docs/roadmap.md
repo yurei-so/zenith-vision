@@ -6,7 +6,8 @@
 - [x] Enforce telemetry authority and fail closed when it is stale.
 - [x] Add provenance-bearing visual observations.
 - [x] Add the fixed Agent Runtime experiment entrypoint.
-- [ ] Add privacy-reviewed dataset manifests and redaction checks.
+- [x] Add digest-bound dataset manifests and privacy intake checks.
+- [ ] Add an independently testable pixel/OCR redaction verifier.
 
 ## Perception experiments
 
