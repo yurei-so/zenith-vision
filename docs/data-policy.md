@@ -13,8 +13,8 @@
   fixtures or meaningful, privacy-reviewed summaries.
 - Dataset manifests record source class, consent, redaction status, license,
   split, and content digest. Train and evaluation splits are immutable per run.
-- Experiment output must not contain screenshots, OCR text, character names,
-  absolute paths, prompts, or private source material.
+- Experiment output must not contain screenshots, character names, absolute
+  paths, prompts, or private source material. OCR text is prohibited by default.
 
 An operator-approved review candidate is not a dataset item. It is stored in an
 owner-only local state directory with a content digest and a receipt containing
@@ -51,3 +51,13 @@ boxed contact sheet must be approved before any proposal becomes a label file.
 The current UI-layout corpus intentionally covers the Guild Wars 2 Small,
 Normal, and Large UI profiles. The Larger/XL profile is explicitly out of scope
 and must not be inferred from adjacent profiles.
+
+The operator permits ordinary game text recognized locally from the
+independently validated Normal objectives crop to enter private structured
+observations. This narrow exception excludes chat, party/squad, character,
+account, guild, minimap, and full-frame text. Observations must carry crop
+digest, OCR confidence, backend, capture time, and disclosure-policy provenance;
+identifier-like patterns fail without output. Low-confidence tokens may be
+omitted only when at least half of all tokens and at least three tokens remain;
+the observation must then declare itself incomplete and record omitted count
+and retained fraction.

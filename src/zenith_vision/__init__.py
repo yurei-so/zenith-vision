@@ -29,12 +29,13 @@ from .collection import (
 )
 from .blind_annotation import BLIND_LAYER_NAMES, create_blind_openraster, extract_blind_boxes
 from .crop_runtime import PROMOTED_UI_PROFILES, CropArtifact, CropReceipt, persist_profile_crops
+from .objectives import ObjectiveTextObservation, interpret_objectives_crop, save_objective_observation
 
 __all__ = [
     "BLIND_LAYER_NAMES", "BoundingBox", "CropArtifact", "CropReceipt", "DatasetItem",
     "DatasetManifest", "FusedObservation",
     "CaptureUnavailable", "ManifestError", "MumbleSnapshot", "OcrFailure", "OcrScan", "OcrToken",
-    "OcrUnavailable", "PROMOTED_UI_PROFILES", "RedactionReceipt", "RegionLabel",
+    "ObjectiveTextObservation", "OcrUnavailable", "PROMOTED_UI_PROFILES", "RedactionReceipt", "RegionLabel",
     "RegionMetrics", "RegionProposal",
     "ReviewCandidateReceipt",
     "RevealDecision", "TesseractOcr", "TextSafetyDecision", "UI_PROFILE_REGION_BOXES",
@@ -46,9 +47,9 @@ __all__ = [
     "create_annotation_proposal", "create_blind_openraster", "create_contact_sheet",
     "difference_hash", "evaluate_regions", "extract_blind_boxes",
     "fuse_observations", "generate_synthetic_corpus",
-    "hamming_distance", "is_distinct", "mask_ocr_tokens", "mask_regions",
+    "hamming_distance", "interpret_objectives_crop", "is_distinct", "mask_ocr_tokens", "mask_regions",
     "parse_tesseract_tsv",
     "parse_wm_class", "persist_profile_crops", "propose_default_regions", "propose_profile_regions",
-    "reverse_reveal", "save_review_candidate",
+    "reverse_reveal", "save_objective_observation", "save_review_candidate",
     "save_batch_manifest", "select_exact_window", "structural_privacy_regions",
 ]

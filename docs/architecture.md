@@ -32,6 +32,13 @@ the full source frame. Small and Large remain frozen experiment profiles, while
 Larger/XL is unsupported. No crop implies a semantic observation until a later
 interpreter produces separately verified structured evidence.
 
+The first interpreter is narrowly scoped to locally recognized ordinary game
+text from the promoted Normal objectives crop. It emits a private structured
+observation with crop digest, backend, confidence, retained/omitted token counts,
+completeness, and disclosure-policy provenance. It does not OCR other crops or
+the full frame, and identifier-like or insufficiently confident results fail
+without output.
+
 ## Experimental progression
 
 1. Contract and fusion policy (current).
