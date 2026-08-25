@@ -36,7 +36,8 @@
 - [x] Reject the first localized candidate after Inventory-only failed the fresh holdout.
 - [x] Collect new development-only Inventory scenes with independently varied position.
 - [x] Reject the first seven-batch successor after one Hero fold destabilized.
-- [ ] Replace order-sensitive head training with a deterministic class-balanced objective.
+- [x] Replace order-sensitive head training with a deterministic class-balanced objective.
+- [x] Pass the seven-batch development gate and package the deterministic successor.
 - [ ] Freeze a new development gate and a different fresh holdout for any successor candidate.
 - [ ] Freeze a real-holdout promotion gate before tuning the UI-state baseline.
 - [ ] Label varied present/absent examples for objectives, skill bar, and minimap.
