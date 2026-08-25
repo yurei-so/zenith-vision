@@ -39,3 +39,11 @@ Bounded collection sessions revalidate the exact window on every attempt,
 apply structural masks before retention, discard perceptual near-duplicates,
 and stop at both a candidate ceiling and a wall-clock deadline. A batch remains
 outside every dataset until its private contact sheet is approved.
+
+Approved batches are admitted into a separate private test holdout with one
+digest-bound admission record per candidate. Batch approval does not produce
+labels, change the test split, or authorize training.
+
+When a stable HUD layout is shared across a reviewed batch, the same
+item-specific seed boxes may generate annotation proposals for every item. The
+boxed contact sheet must be approved before any proposal becomes a label file.

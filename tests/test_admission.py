@@ -10,7 +10,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from zenith_vision import DatasetManifest, ManifestError, admit_review_candidate, save_review_candidate
+from zenith_vision import DatasetManifest, ManifestError, admit_review_batch, admit_review_candidate, save_batch_manifest, save_review_candidate
 
 
 class AdmissionTests(unittest.TestCase):
@@ -51,6 +51,26 @@ class AdmissionTests(unittest.TestCase):
         self.receipt.write_text(json.dumps(raw))
         with self.assertRaisesRegex(ManifestError, "mask policy"):
             admit_review_candidate(self.candidate, self.receipt, self.dataset, item_id="operator-00001")
+
+    def test_admits_review_batch_as_unlabeled_test_holdout(self) -> None:
+        root = Path(self.temp.name)
+        batch = root / "batch"
+        batch.mkdir()
+        entries = []
+        for sequence, color in enumerate(("red", "blue"), start=1):
+            candidate, receipt, saved = save_review_candidate(
+                Image.new("RGB", (20, 10), color), batch,
+                source_title="Synthetic", source_instance="fixture", source_class="fixture",
+                ocr_token_count=0, mask_policy="operator-trusted-gameplay-v1",
+            )
+            entries.append({"sequence": sequence, "candidate": candidate.name, "receipt": receipt.name,
+                            "candidate_sha256": saved.candidate_sha256})
+        save_batch_manifest(batch, entries, started_at="2026-08-25T00:00:00+00:00")
+        manifest_path = admit_review_batch(batch, root / "holdout")
+        manifest = DatasetManifest.load(manifest_path)
+        self.assertEqual(len(manifest.items), 2)
+        self.assertTrue(all(item.labels_path is None and item.split == "test" for item in manifest.items))
+        self.assertEqual(json.loads((batch / "batch.json").read_text())["status"], "approved")
 
 
 if __name__ == "__main__":
