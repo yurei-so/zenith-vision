@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from zenith_vision import BoundingBox, RegionLabel, RegionProposal, evaluate_regions, propose_default_regions
+from zenith_vision import BoundingBox, RegionLabel, RegionProposal, evaluate_regions, propose_default_regions, propose_profile_regions
 
 
 class LayoutBaselineTests(unittest.TestCase):
@@ -33,6 +33,17 @@ class LayoutBaselineTests(unittest.TestCase):
         metrics = evaluate_regions((RegionProposal("chat", box, 0.5),), (RegionLabel("minimap", box),))
         self.assertEqual(metrics.matched, 0)
         self.assertEqual(metrics.mean_iou, 0.0)
+
+    def test_profile_regions_are_frozen_and_explicit(self) -> None:
+        normal = propose_profile_regions(1920, 1080, ui_scale="normal")
+        self.assertEqual({item.kind for item in normal}, {"objectives", "skill_bar", "minimap"})
+        self.assertTrue(all(item.source == "gw2_normal_layout_profile_v1" for item in normal))
+        self.assertEqual(next(item.box for item in normal if item.kind == "skill_bar"),
+                         BoundingBox(0.30, 0.84, 0.40, 0.16))
+
+    def test_profile_regions_reject_xl(self) -> None:
+        with self.assertRaisesRegex(ValueError, "unsupported UI scale"):
+            propose_profile_regions(1920, 1080, ui_scale="larger")
 
 
 if __name__ == "__main__":

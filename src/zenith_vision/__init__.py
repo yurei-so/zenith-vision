@@ -3,7 +3,10 @@
 from .fusion import fuse_observations
 from .dataset import DatasetItem, DatasetManifest, ManifestError
 from .models import BoundingBox, FusedObservation, MumbleSnapshot, VisionObservation
-from .layout import RegionLabel, RegionMetrics, RegionProposal, evaluate_regions, propose_default_regions
+from .layout import (
+    UI_PROFILE_REGION_BOXES, RegionLabel, RegionMetrics, RegionProposal,
+    evaluate_regions, propose_default_regions, propose_profile_regions,
+)
 from .redaction import RedactionReceipt, RevealDecision, mask_regions, reverse_reveal
 from .ocr import (
     OcrFailure, OcrScan, OcrToken, OcrUnavailable, TesseractOcr,
@@ -30,7 +33,8 @@ __all__ = [
     "CaptureUnavailable", "ManifestError", "MumbleSnapshot", "OcrFailure", "OcrScan", "OcrToken",
     "OcrUnavailable", "RedactionReceipt", "RegionLabel", "RegionMetrics", "RegionProposal",
     "ReviewCandidateReceipt",
-    "RevealDecision", "TesseractOcr", "TextSafetyDecision", "VISIBLE_HUD_LABELS",
+    "RevealDecision", "TesseractOcr", "TextSafetyDecision", "UI_PROFILE_REGION_BOXES",
+    "VISIBLE_HUD_LABELS",
     "VisionObservation", "WindowIdentity",
     "WindowSelectionError", "XWindowCapture",
     "admit_review_batch", "admit_review_candidate", "approve_annotation_batch",
@@ -39,6 +43,7 @@ __all__ = [
     "fuse_observations", "generate_synthetic_corpus",
     "hamming_distance", "is_distinct", "mask_ocr_tokens", "mask_regions",
     "parse_tesseract_tsv",
-    "parse_wm_class", "propose_default_regions", "reverse_reveal", "save_review_candidate",
+    "parse_wm_class", "propose_default_regions", "propose_profile_regions",
+    "reverse_reveal", "save_review_candidate",
     "save_batch_manifest", "select_exact_window", "structural_privacy_regions",
 ]

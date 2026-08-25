@@ -39,13 +39,48 @@ DEFAULT_REGION_BOXES: dict[str, BoundingBox] = {
     "minimap": BoundingBox(0.735, 0.680, 0.265, 0.320),
 }
 
+# Frozen after operator review of the three calibration strata in Labnote 003.
+# These remain crop heuristics and must not be described as semantic detections.
+UI_PROFILE_REGION_BOXES: dict[str, dict[str, BoundingBox]] = {
+    "small": {
+        "objectives": BoundingBox(0.855, 0.000, 0.145, 0.360),
+        "skill_bar": BoundingBox(0.349, 0.877, 0.379, 0.123),
+        "minimap": BoundingBox(0.831, 0.771, 0.169, 0.228),
+    },
+    "normal": {
+        "objectives": BoundingBox(0.840, 0.000, 0.160, 0.540),
+        "skill_bar": BoundingBox(0.300, 0.840, 0.400, 0.160),
+        "minimap": BoundingBox(0.810, 0.740, 0.190, 0.260),
+    },
+    "large": {
+        "objectives": BoundingBox(0.830, 0.000, 0.170, 0.550),
+        "skill_bar": BoundingBox(0.300, 0.840, 0.430, 0.160),
+        "minimap": BoundingBox(0.790, 0.700, 0.210, 0.300),
+    },
+}
+
 
 def propose_default_regions(width: int, height: int) -> tuple[RegionProposal, ...]:
+    _validate_viewport(width, height)
+    return tuple(RegionProposal(kind, box, 0.5) for kind, box in DEFAULT_REGION_BOXES.items())
+
+
+def propose_profile_regions(width: int, height: int, *, ui_scale: str) -> tuple[RegionProposal, ...]:
+    _validate_viewport(width, height)
+    boxes = UI_PROFILE_REGION_BOXES.get(ui_scale)
+    if boxes is None:
+        raise ValueError("unsupported UI scale")
+    return tuple(
+        RegionProposal(kind, box, 0.75, source=f"gw2_{ui_scale}_layout_profile_v1")
+        for kind, box in boxes.items()
+    )
+
+
+def _validate_viewport(width: int, height: int) -> None:
     if width < 640 or height < 480:
         raise ValueError("viewport must be at least 640x480")
     if width / height < 4 / 3:
         raise ValueError("unsupported viewport aspect ratio")
-    return tuple(RegionProposal(kind, box, 0.5) for kind, box in DEFAULT_REGION_BOXES.items())
 
 
 def intersection_over_union(left: BoundingBox, right: BoundingBox) -> float:
