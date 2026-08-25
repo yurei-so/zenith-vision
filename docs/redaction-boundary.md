@@ -25,6 +25,12 @@ The local masking pass obscures every recognized token with padding and fails
 closed if any token lacks valid geometry. This produces an in-memory candidate
 for human privacy review; it is not proof that OCR found every sensitive glyph.
 
+For the current `operator-trusted-gameplay-v1` posture, complete structural
+masks cover chat and party/squad panels. Ordinary world labels and non-sensitive
+game UI remain visible. OCR still runs locally and its token count is recorded,
+but it does not mask ordinary gameplay text. This is an explicit operator policy
+choice, not an inference that OCR absence proves text safe.
+
 The initial XWayland adapter selects a window by the exact tuple of title,
 instance, and class, then revalidates the same identity immediately before and
 after capture. Raw pixels exist only in an owner-only temporary directory and

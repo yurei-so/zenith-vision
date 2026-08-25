@@ -15,3 +15,8 @@
   split, and content digest. Train and evaluation splits are immutable per run.
 - Experiment output must not contain screenshots, OCR text, character names,
   absolute paths, prompts, or private source material.
+
+An operator-approved review candidate is not a dataset item. It is stored in an
+owner-only local state directory with a content digest and a receipt containing
+no OCR text. Admission requires a later explicit review decision; merely
+creating or viewing the candidate grants no training or transfer permission.

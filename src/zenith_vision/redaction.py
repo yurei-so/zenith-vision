@@ -68,6 +68,21 @@ def reverse_reveal(
     )
 
 
+def mask_regions(
+    image: Image.Image,
+    boxes: Iterable[BoundingBox],
+    *,
+    fill: tuple[int, int, int] = (0, 0, 0),
+) -> Image.Image:
+    """Mask complete structural privacy zones on a copy of the image."""
+    result = image.convert("RGB").copy()
+    draw = ImageDraw.Draw(result)
+    for box in boxes:
+        left, top, right, bottom = _pixel_box(box, result.width, result.height)
+        draw.rectangle((left, top, max(left, right - 1), max(top, bottom - 1)), fill=fill)
+    return result
+
+
 def _pixel_box(box: BoundingBox, width: int, height: int) -> tuple[int, int, int, int]:
     left = max(0, min(width, round(box.x * width)))
     top = max(0, min(height, round(box.y * height)))

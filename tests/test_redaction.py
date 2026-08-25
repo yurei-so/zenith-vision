@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from zenith_vision import BoundingBox, RevealDecision, reverse_reveal
+from zenith_vision import BoundingBox, RevealDecision, mask_regions, reverse_reveal
 
 
 class ReverseRevealTests(unittest.TestCase):
@@ -41,6 +41,11 @@ class ReverseRevealTests(unittest.TestCase):
         ]
         _, receipt = reverse_reveal(self.image, decisions)
         self.assertEqual(receipt.revealed_pixels, 4375)
+
+    def test_masks_complete_structural_regions(self) -> None:
+        result = mask_regions(self.image, [BoundingBox(0, 0.5, 0.5, 0.5)])
+        self.assertEqual(result.getpixel((25, 75)), (0, 0, 0))
+        self.assertEqual(result.getpixel((75, 75)), (250, 100, 50))
 
 
 if __name__ == "__main__":
