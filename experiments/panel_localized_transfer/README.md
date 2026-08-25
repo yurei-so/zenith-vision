@@ -5,6 +5,10 @@ header/icon-rail and Inventory-grid proposals. Independent multiple-instance
 classifier heads learn from sample-level labels and score only their matching
 region family.
 
+Heads use a deterministic full-batch, class-balanced multiple-instance
+objective. This prevents sample order from changing the negative-class balance
+when new position batches are added.
+
 The current corpus includes the original four environment batches plus three
 new Inventory-only development batches staged at left, right, and center panel
 positions. Each position batch is independently held out in its own fold.

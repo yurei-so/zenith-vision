@@ -34,7 +34,9 @@
 - [x] Freeze and pass a development-only calibration gate for localized panel evidence.
 - [x] Package the first localized candidate with corpus, region-plan, threshold, and model provenance.
 - [x] Reject the first localized candidate after Inventory-only failed the fresh holdout.
-- [ ] Collect new development-only Inventory scenes with independently varied position and environment.
+- [x] Collect new development-only Inventory scenes with independently varied position.
+- [x] Reject the first seven-batch successor after one Hero fold destabilized.
+- [ ] Replace order-sensitive head training with a deterministic class-balanced objective.
 - [ ] Freeze a new development gate and a different fresh holdout for any successor candidate.
 - [ ] Freeze a real-holdout promotion gate before tuning the UI-state baseline.
 - [ ] Label varied present/absent examples for objectives, skill bar, and minimap.

@@ -87,21 +87,20 @@ def train_head(samples: list[Sample], class_index: int, device: torch.device) ->
     positives = labels.sum().clamp(min=1)
     negatives = (len(samples) - labels.sum()).clamp(min=1)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=(negatives / positives).reshape(1))
-    optimizer = torch.optim.AdamW(head.parameters(), lr=4e-3, weight_decay=2e-3)
-    generator = torch.Generator().manual_seed(SEED + class_index)
-    for _ in range(160):
-        order = torch.randperm(len(samples), generator=generator).tolist()
-        for sample_index in order:
-            sample = samples[sample_index]
-            regions = sample.embeddings[class_index].to(device)
-            # Smooth maximum keeps learning distributed early while preserving
-            # the multiple-instance rule that one localized region is enough.
-            bag_logit = torch.logsumexp(head(regions).flatten() * 4.0, dim=0) / 4.0
-            target = torch.tensor([sample.labels[class_index]], device=device)
-            loss = loss_fn(bag_logit.reshape(1), target)
-            optimizer.zero_grad(set_to_none=True)
-            loss.backward()
-            optimizer.step()
+    optimizer = torch.optim.AdamW(head.parameters(), lr=2e-3, weight_decay=2e-3)
+    bags = [sample.embeddings[class_index].to(device) for sample in samples]
+    for _ in range(400):
+        logits = []
+        for regions in bags:
+            region_logits = head(regions).flatten()
+            # Normalized smooth maximum avoids a proposal-count-dependent
+            # offset while keeping gradients across plausible local regions.
+            logits.append(torch.logsumexp(region_logits * 4.0, dim=0) / 4.0
+                          - np.log(len(region_logits)) / 4.0)
+        loss = loss_fn(torch.stack(logits), labels)
+        optimizer.zero_grad(set_to_none=True)
+        loss.backward()
+        optimizer.step()
     return head
 
 
@@ -182,7 +181,7 @@ def main() -> None:
     folds = [run_fold(samples, held, device) for held in range(len(BATCHES))]
     gate = promotion_gate(folds)
     candidate = package_candidate(samples, device) if gate["passed"] else None
-    print(json.dumps({"experiment": "panel-localized-transfer-v2", "device": device.type,
+    print(json.dumps({"experiment": "panel-localized-transfer-v3", "device": device.type,
                       "backbone": "mobilenet_v3_small_frozen", "threshold": THRESHOLD,
                       "holdout_used": False, "folds": folds, "promotion_gate": gate,
                       "candidate": candidate},
