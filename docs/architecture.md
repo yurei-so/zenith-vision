@@ -26,6 +26,12 @@ Zenith's relay. Zenith Vision does not copy or control that relay. The live
 one-shot runner and fusion helper are lab-only authority tests and must not grow
 polling loops, background lifecycle, or a second application backend.
 
+The versioned `zenith-vision.semantic-scene` one-shot contract combines current
+MumbleLink world state with allowlisted panel observations. It omits character
+identity and withholds source frames, masked frames, and raw OCR text. Missing
+or stale telemetry never permits vision to guess world state. The snapshot is
+ephemeral output; Zenith Vision still owns no daemon or production lifecycle.
+
 Default HUD geometry is a conservative crop proposal, not detector ground
 truth. Training labels must trace the actual visible UI extent on each reviewed
 item and carry their own review status.

@@ -54,6 +54,7 @@
 
 ## Integration gates
 
+- [x] Emit a versioned ephemeral semantic scene from MumbleLink and allowlisted UI evidence.
 - [ ] Publish a versioned observation schema only after held-out evaluation.
 - [ ] Prototype retrieval-backed advice without training mutable game facts.
 - [ ] Design an optional Zenith consumer; do not embed experimental internals.
