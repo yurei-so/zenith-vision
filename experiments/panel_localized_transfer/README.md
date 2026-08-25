@@ -11,7 +11,8 @@ when new position batches are added.
 
 The current corpus includes the original four environment batches plus three
 new Inventory-only development batches staged at left, right, and center panel
-positions. Each position batch is independently held out in its own fold.
+positions, plus a Hero-only snowy Hoelbrak batch. Each batch is independently
+held out in its own fold.
 
 The experiment performs leave-one-development-batch-out evaluation. Its
 promotion gate is frozen at 80% aggregate exact accuracy, at least 70% exact
