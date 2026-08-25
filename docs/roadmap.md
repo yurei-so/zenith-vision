@@ -39,7 +39,8 @@
 - [x] Replace order-sensitive head training with a deterministic class-balanced objective.
 - [x] Pass the seven-batch development gate and package the deterministic successor.
 - [x] Reject the deterministic successor after the snowy Hero-only state missed its fresh holdout floor.
-- [ ] Collect new Hero-only development scenes across bright and snowy environments.
+- [x] Collect and cross-validate new Hero-only snowy development scenes.
+- [x] Pass the eight-batch development gate and package the snowy Hero successor.
 - [ ] Freeze a new development gate and a different fresh holdout for any successor candidate.
 - [ ] Freeze a real-holdout promotion gate before tuning the UI-state baseline.
 - [ ] Label varied present/absent examples for objectives, skill bar, and minimap.
