@@ -5,8 +5,9 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from zenith_vision import BoundingBox
 from zenith_vision.ocr import OcrScan, OcrToken
-from zenith_vision.panels import recognize_panel_titles, scan_panel_titles
+from zenith_vision.panels import recognize_panel_titles, scan_panel_tiles, scan_panel_titles
 from PIL import Image
 
 
@@ -50,10 +51,29 @@ class PanelRecognitionTests(unittest.TestCase):
         self.assertEqual(result.panels, ("hero",))
         self.assertEqual(backend.sizes, [(1200, 740), (1300, 700)])
 
+    def test_accepts_low_confidence_hero_only_at_known_header_anchor(self) -> None:
+        anchored = OcrToken("Hero.", 0.47, BoundingBox(0.78, 0.16, 0.05, 0.04))
+        backend = RecordingOcr(OcrScan((anchored,), "fake", True))
+        result = scan_panel_titles(Image.new("RGB", (1000, 500)), backend)
+        self.assertEqual(result.panels, ("hero",))
+        self.assertEqual(result.confidence, 0.47)
+
+    def test_rejects_low_confidence_hero_outside_header_anchor(self) -> None:
+        world_text = OcrToken("Hero", 0.79, BoundingBox(0.40, 0.50, 0.05, 0.04))
+        backend = RecordingOcr(OcrScan((world_text,), "fake", True))
+        result = scan_panel_titles(Image.new("RGB", (1000, 500)), backend)
+        self.assertEqual(result.status, "uncertain")
+        self.assertEqual(result.panels, ())
+
     def test_rejects_tiny_frame(self) -> None:
         backend = RecordingOcr(OcrScan((), "fake", True))
         with self.assertRaisesRegex(ValueError, "640x480"):
             scan_panel_titles(Image.new("RGB", (320, 240)), backend)
+
+    def test_replays_from_persisted_tiles(self) -> None:
+        backend = RecordingOcr(OcrScan((OcrToken("Inventory", 0.95),), "fake", True))
+        result = scan_panel_tiles(Image.new("RGB", (600, 370)), Image.new("RGB", (650, 350)), backend)
+        self.assertEqual(result.panels, ("inventory",))
 
 
 if __name__ == "__main__":

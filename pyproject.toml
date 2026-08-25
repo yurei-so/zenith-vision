@@ -10,7 +10,11 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "Yūrei.so" }]
-dependencies = ["Pillow>=11,<13"]
+dependencies = ["numpy>=2,<3", "Pillow>=11,<13"]
+
+[project.optional-dependencies]
+vision-experiments = ["scikit-learn>=1.7,<2"]
+transfer-experiments = ["torch>=2.8,<3", "torchvision>=0.23,<1"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

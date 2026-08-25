@@ -23,6 +23,10 @@
 - [x] Add an inspectable CPU baseline for `present` / `absent` / `uncertain` HUD states.
 - [x] Add a chat-masked, allowlisted title recognizer for Inventory and Hero panels.
 - [ ] Validate Inventory and Hero recognition on varied Small-UI live scenes.
+- [x] Freeze a recognition-disabled Small-UI panel holdout before visual-model training.
+- [x] Evaluate and reject a compact global visual baseline on the frozen holdout.
+- [ ] Build localized Hero-header/icon-rail and Inventory-grid evidence.
+- [ ] Freeze a new holdout before evaluating the localized detector.
 - [ ] Freeze a real-holdout promotion gate before tuning the UI-state baseline.
 - [ ] Label varied present/absent examples for objectives, skill bar, and minimap.
 - [ ] Evaluate the frozen UI-state baseline on the real holdout.

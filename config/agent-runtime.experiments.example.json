@@ -31,6 +31,16 @@
       "args": ["synthetic_corpus_smoke"],
       "environment": {},
       "timeout_seconds": 30
+    },
+    {
+      "id": "zenith-vision.panel-transfer-baseline",
+      "display_name": "Zenith Vision panel transfer baseline",
+      "description": "Train and cross-validate a frozen MobileNet V3 Small panel classifier on private masked development tiles.",
+      "repository_root": "/home/USER/github/zenith-vision",
+      "executable": "/home/USER/github/zenith-vision/scripts/run-experiment",
+      "args": ["panel_transfer_baseline"],
+      "environment": {},
+      "timeout_seconds": 900
     }
   ]
 }

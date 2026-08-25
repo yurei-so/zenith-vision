@@ -29,6 +29,14 @@ positions. The scanner was therefore changed to overlapping left and central
 search areas. This correction was made from observed geometry before a frozen
 holdout was established; the batch must not be reused as final evaluation data.
 
+The first formal masked batch contained seven visually confirmed Hero frames
+and two no-panel frames. The overlap fix recognized five Hero frames, abstained
+on the Story and Fashion variants, and correctly returned no panel twice. Both
+misses still contained the exact allowlisted title at the same stable header
+anchor, but stylized OCR confidence fell to 0.471 and 0.757. A Small-UI Hero
+header anchor was added with a 0.45 floor; low-confidence `Hero` text elsewhere
+still abstains. This is another development-set correction, not holdout evidence.
+
 | Check | Result |
 | --- | --- |
 | Exact game window | Pass |

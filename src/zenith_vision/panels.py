@@ -63,16 +63,23 @@ def scan_panel_titles(image: Image.Image, ocr: PanelOcrBackend) -> PanelObservat
     if image.width < 640 or image.height < 480:
         raise ValueError("panel recognition requires at least a 640x480 frame")
     source = image.convert("RGB")
-    areas = (
-        (0.00, 0.04, 0.60, 0.78),
-        (0.20, 0.08, 0.85, 0.78),
-    )
+    areas = ((0.00, 0.04, 0.60, 0.78), (0.20, 0.08, 0.85, 0.78))
+    tiles = tuple(source.crop((round(image.width * x1), round(image.height * y1),
+                               round(image.width * x2), round(image.height * y2)))
+                  for x1, y1, x2, y2 in areas)
+    try:
+        return scan_panel_tiles(tiles[0], tiles[1], ocr)
+    finally:
+        for tile in tiles:
+            tile.close()
+
+
+def scan_panel_tiles(left: Image.Image, center: Image.Image, ocr: PanelOcrBackend) -> PanelObservation:
+    """Replay recognition from the two persisted, privacy-masked search tiles."""
     scans: list[OcrScan] = []
-    for x1, y1, x2, y2 in areas:
-        search = source.crop((round(image.width * x1), round(image.height * y1),
-                              round(image.width * x2), round(image.height * y2)))
-        prepared = ImageOps.autocontrast(search.convert("L")).resize(
-            (search.width * 2, search.height * 2), Image.Resampling.LANCZOS,
+    for tile in (left, center):
+        prepared = ImageOps.autocontrast(tile.convert("L")).resize(
+            (tile.width * 2, tile.height * 2), Image.Resampling.LANCZOS,
         )
         scans.append(ocr.scan(prepared))
     combined = OcrScan(
@@ -80,7 +87,28 @@ def scan_panel_titles(image: Image.Image, ocr: PanelOcrBackend) -> PanelObservat
         backend="+".join(dict.fromkeys(scan.backend for scan in scans)),
         complete=all(scan.complete for scan in scans),
     )
-    return recognize_panel_titles(combined)
+    result = recognize_panel_titles(combined)
+    anchored_hero = _anchored_hero_confidence(scans[0])
+    if anchored_hero is None:
+        return result
+    panels = tuple(sorted(set(result.panels) | {"hero"}))
+    confidence = min((result.confidence if result.panels else 1.0), anchored_hero)
+    return _result(panels, "recognized", confidence, combined.backend)
+
+
+def _anchored_hero_confidence(scan: OcrScan) -> float | None:
+    """Recover stylized Small-UI Hero headers only inside the known left-tile anchor."""
+    if not scan.complete:
+        return None
+    matches: list[float] = []
+    for token in scan.tokens:
+        title = " ".join(token.text.casefold().split()).strip("[](){}:;,.!?")
+        box = token.box
+        if (title == "hero" and token.confidence >= 0.45 and box is not None
+                and ((0.35 <= box.x <= 0.47 and 0.05 <= box.y <= 0.15)
+                     or (0.72 <= box.x <= 0.88 and 0.10 <= box.y <= 0.23))):
+            matches.append(token.confidence)
+    return max(matches, default=None)
 
 
 def _result(
