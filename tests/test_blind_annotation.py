@@ -43,6 +43,27 @@ class BlindAnnotationTests(unittest.TestCase):
             self.assertEqual(boxes["objectives"].x, 0.10)
             self.assertEqual(boxes["objectives"].height, 0.40)
 
+    def test_applies_krita_cropped_layer_offsets(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source, document = root / "source.png", root / "blind.ora"
+            Image.new("RGB", (100, 100), "navy").save(source)
+            create_blind_openraster(source, document)
+            rewritten = root / "krita.ora"
+            with zipfile.ZipFile(document) as original, zipfile.ZipFile(rewritten, "w") as output:
+                stack = original.read("stack.xml").replace(b'name="objectives"', b'name="objectives" x="70" y="20"')
+                for info in original.infolist():
+                    payload = stack if info.filename == "stack.xml" else original.read(info.filename)
+                    if info.filename == "data/objectives.png":
+                        layer = Image.new("RGBA", (20, 30), (255, 0, 0, 255))
+                        stream = io.BytesIO(); layer.save(stream, format="PNG"); payload = stream.getvalue()
+                    elif info.filename.startswith("data/") and info.filename != "data/source.png":
+                        layer = Image.new("RGBA", (100, 100), (255, 0, 0, 255))
+                        stream = io.BytesIO(); layer.save(stream, format="PNG"); payload = stream.getvalue()
+                    output.writestr(info, payload)
+            box = extract_blind_boxes(rewritten)["objectives"]
+            self.assertEqual((box.x, box.y, box.width, box.height), (0.7, 0.2, 0.2, 0.3))
+
     def test_rejects_empty_layers(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

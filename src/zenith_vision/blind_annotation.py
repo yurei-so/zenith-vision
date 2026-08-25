@@ -53,24 +53,31 @@ def extract_blind_boxes(document: Path, *, minimum_fill: float = 0.90) -> dict[s
     boxes: dict[str, BoundingBox] = {}
     with zipfile.ZipFile(document) as archive:
         root = ET.fromstring(archive.read("stack.xml"))
-        named = {layer.get("name"): layer.get("src") for layer in root.iter("layer")}
+        canvas_width, canvas_height = int(root.get("w", "0")), int(root.get("h", "0"))
+        if canvas_width <= 0 or canvas_height <= 0:
+            raise ValueError("blind annotation document has invalid canvas dimensions")
+        named = {layer.get("name"): layer for layer in root.iter("layer")}
         for name in BLIND_LAYER_NAMES:
-            source = named.get(name)
-            if not source:
+            element = named.get(name)
+            if element is None or not element.get("src"):
                 raise ValueError(f"missing blind annotation layer: {name}")
-            with Image.open(io.BytesIO(archive.read(source))) as layer:
+            with Image.open(io.BytesIO(archive.read(element.get("src", "")))) as layer:
                 alpha = layer.convert("RGBA").getchannel("A")
                 bounds = alpha.getbbox()
                 if bounds is None:
                     raise ValueError(f"empty blind annotation layer: {name}")
                 x1, y1, x2, y2 = bounds
-                occupied = sum(1 for value in alpha.crop(bounds).getdata() if value > 0)
+                occupied = sum(1 for value in alpha.crop(bounds).tobytes() if value > 0)
                 area = (x2 - x1) * (y2 - y1)
                 if area == 0 or occupied / area < minimum_fill:
                     raise ValueError(f"blind annotation layer is not a filled rectangle: {name}")
+                offset_x, offset_y = int(element.get("x", "0")), int(element.get("y", "0"))
+                absolute_x1, absolute_y1 = offset_x + x1, offset_y + y1
+                normalized_x, normalized_y = absolute_x1 / canvas_width, absolute_y1 / canvas_height
                 boxes[name] = BoundingBox(
-                    x1 / layer.width, y1 / layer.height,
-                    (x2 - x1) / layer.width, (y2 - y1) / layer.height,
+                    normalized_x, normalized_y,
+                    min((x2 - x1) / canvas_width, 1.0 - normalized_x),
+                    min((y2 - y1) / canvas_height, 1.0 - normalized_y),
                 )
     return boxes
 
