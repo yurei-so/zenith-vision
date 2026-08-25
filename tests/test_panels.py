@@ -13,10 +13,10 @@ from PIL import Image
 class RecordingOcr:
     def __init__(self, scan: OcrScan) -> None:
         self.result = scan
-        self.size = None
+        self.sizes = []
 
     def scan(self, image: Image.Image) -> OcrScan:
-        self.size = image.size
+        self.sizes.append(image.size)
         return self.result
 
 
@@ -48,7 +48,7 @@ class PanelRecognitionTests(unittest.TestCase):
         backend = RecordingOcr(OcrScan((OcrToken("Hero", 0.95),), "fake", True))
         result = scan_panel_titles(Image.new("RGB", (1000, 500)), backend)
         self.assertEqual(result.panels, ("hero",))
-        self.assertEqual(backend.size, (1300, 700))
+        self.assertEqual(backend.sizes, [(1200, 740), (1300, 700)])
 
     def test_rejects_tiny_frame(self) -> None:
         backend = RecordingOcr(OcrScan((), "fake", True))

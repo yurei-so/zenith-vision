@@ -23,6 +23,12 @@ whole-frame OCR configuration did not find the clearly visible title and
 correctly emitted no supported panel. Preprocessing and constraining the search
 area corrected that failure without lowering the confidence gate.
 
+A subsequent combat-chaos batch exposed a second geometry error: the single
+central search band excluded the left-anchored Hero equipment view in most
+positions. The scanner was therefore changed to overlapping left and central
+search areas. This correction was made from observed geometry before a frozen
+holdout was established; the batch must not be reused as final evaluation data.
+
 | Check | Result |
 | --- | --- |
 | Exact game window | Pass |

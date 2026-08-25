@@ -59,17 +59,28 @@ def recognize_panel_titles(
 
 
 def scan_panel_titles(image: Image.Image, ocr: PanelOcrBackend) -> PanelObservation:
-    """Scan a fixed central panel-search area after callers mask privacy zones."""
+    """Scan overlapping left and central areas after callers mask privacy zones."""
     if image.width < 640 or image.height < 480:
         raise ValueError("panel recognition requires at least a 640x480 frame")
-    search = image.convert("RGB").crop((
-        round(image.width * 0.20), round(image.height * 0.08),
-        round(image.width * 0.85), round(image.height * 0.78),
-    ))
-    prepared = ImageOps.autocontrast(search.convert("L")).resize(
-        (search.width * 2, search.height * 2), Image.Resampling.LANCZOS,
+    source = image.convert("RGB")
+    areas = (
+        (0.00, 0.04, 0.60, 0.78),
+        (0.20, 0.08, 0.85, 0.78),
     )
-    return recognize_panel_titles(ocr.scan(prepared))
+    scans: list[OcrScan] = []
+    for x1, y1, x2, y2 in areas:
+        search = source.crop((round(image.width * x1), round(image.height * y1),
+                              round(image.width * x2), round(image.height * y2)))
+        prepared = ImageOps.autocontrast(search.convert("L")).resize(
+            (search.width * 2, search.height * 2), Image.Resampling.LANCZOS,
+        )
+        scans.append(ocr.scan(prepared))
+    combined = OcrScan(
+        tokens=tuple(token for scan in scans for token in scan.tokens),
+        backend="+".join(dict.fromkeys(scan.backend for scan in scans)),
+        complete=all(scan.complete for scan in scans),
+    )
+    return recognize_panel_titles(combined)
 
 
 def _result(
