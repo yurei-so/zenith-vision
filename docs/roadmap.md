@@ -43,7 +43,7 @@
 - [x] Pass the eight-batch development gate and package the snowy Hero successor.
 - [x] Reject the snowy Hero successor after the swamp holdout failed.
 - [x] End the small-corpus frozen-backbone panel-classifier branch.
-- [ ] Build an OCR-and-anchor-first live panel observation with conservative abstention.
+- [x] Build an OCR-and-anchor-first one-shot live panel observation with conservative abstention.
 - [ ] Freeze a new development gate and a different fresh holdout for any successor candidate.
 - [ ] Freeze a real-holdout promotion gate before tuning the UI-state baseline.
 - [ ] Label varied present/absent examples for objectives, skill bar, and minimap.
