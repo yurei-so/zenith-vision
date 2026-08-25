@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 from typing import Iterable
@@ -53,3 +54,31 @@ def write_model_bundle(destination: Path, payload: dict[str, object]) -> tuple[P
     finally:
         temporary.unlink(missing_ok=True)
     return path, sha256
+
+
+def load_model_bundle(path: Path) -> tuple[dict[str, object], str]:
+    encoded = path.read_bytes()
+    sha256 = hashlib.sha256(encoded).hexdigest()
+    payload = json.loads(encoded)
+    if payload.get("format") != "zenith-vision.localized-panel-model" or payload.get("version") != 1:
+        raise ValueError("unsupported localized panel model bundle")
+    if payload.get("classes") != ["hero", "inventory"]:
+        raise ValueError("unsupported localized panel classes")
+    threshold = payload.get("threshold")
+    if not isinstance(threshold, (int, float)) or not 0.0 < threshold < 1.0:
+        raise ValueError("invalid localized panel threshold")
+    plan = payload.get("region_plan")
+    if not isinstance(plan, list) or region_plan_digest(plan) != payload.get("region_plan_sha256"):
+        raise ValueError("localized panel region plan digest mismatch")
+    heads = payload.get("heads")
+    if not isinstance(heads, dict):
+        raise ValueError("localized panel heads are missing")
+    for kind in ("hero", "inventory"):
+        head = heads.get(kind)
+        if not isinstance(head, dict) or not isinstance(head.get("weight"), list) or len(head["weight"]) != 576:
+            raise ValueError("invalid localized panel head")
+        if not all(isinstance(value, (int, float)) and math.isfinite(value) for value in head["weight"]):
+            raise ValueError("invalid localized panel head weight")
+        if not isinstance(head.get("bias"), (int, float)) or not math.isfinite(head["bias"]):
+            raise ValueError("invalid localized panel head bias")
+    return payload, sha256
