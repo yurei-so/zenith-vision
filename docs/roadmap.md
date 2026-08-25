@@ -8,7 +8,9 @@
 - [x] Add the fixed Agent Runtime experiment entrypoint.
 - [x] Add digest-bound dataset manifests and privacy intake checks.
 - [x] Add an independently testable reverse-reveal pixel boundary.
-- [ ] Add sensitive-text/OCR verification before allowing real captures.
+- [x] Add a fail-closed local OCR verification contract.
+- [ ] Validate real Tesseract output after the operator installs the OS package.
+- [ ] Add selected-window identity verification before allowing real captures.
 
 ## Perception experiments
 

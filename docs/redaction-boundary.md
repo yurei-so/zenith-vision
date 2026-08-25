@@ -13,3 +13,9 @@ This primitive is necessary but not sufficient for live capture. Before any
 operator frame is admitted, separate work must verify the selected window,
 detect sensitive UI and OCR content, and test that those detectors fail closed.
 Until then, only synthetic images may exercise this boundary.
+
+The local OCR gate treats every recognized token as private unless it is both
+confident and present in an experiment-specific allowlist. Ambiguous output,
+malformed output, backend failure, or timeout rejects the reveal. A clean OCR
+result still does not classify a region as safe: an independent region verifier
+must also approve it.
