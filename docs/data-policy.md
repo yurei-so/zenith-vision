@@ -61,3 +61,9 @@ identifier-like patterns fail without output. Low-confidence tokens may be
 omitted only when at least half of all tokens and at least three tokens remain;
 the observation must then declare itself incomplete and record omitted count
 and retained fraction.
+
+For semantic panel recognition, the operator permits local inspection of the
+selected Guild Wars 2 window after complete structural masking of chat and
+party/squad zones. The recognizer may emit only predeclared panel kinds and
+confidence metadata; all other OCR tokens and panel contents are discarded.
+The initial allowlist is `inventory` and `hero`. Full frames remain ephemeral.

@@ -52,6 +52,10 @@ class OcrSafetyTests(unittest.TestCase):
             with self.assertRaises(OcrUnavailable):
                 TesseractOcr()
 
+    def test_rejects_unsupported_page_segmentation_mode(self) -> None:
+        with self.assertRaisesRegex(ValueError, "segmentation"):
+            TesseractOcr(page_segmentation_mode=3)
+
     def test_malformed_tsv_fails_closed(self) -> None:
         with self.assertRaises(OcrFailure):
             parse_tesseract_tsv("not\ta\tvalid\theader\n")

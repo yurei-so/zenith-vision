@@ -33,6 +33,11 @@ from .objectives import (
     ObjectiveTextObservation, interpret_objectives_crop, objective_text_to_vision,
     save_objective_observation,
 )
+from .panels import PANEL_TITLES, PanelObservation, recognize_panel_titles, scan_panel_titles
+from .ui_state import (
+    UiStateBaseline, UiStateExample, UiStateFeatures, UiStateRecognition,
+    extract_ui_state_features,
+)
 
 __all__ = [
     "BLIND_LAYER_NAMES", "BoundingBox", "CropArtifact", "CropReceipt", "DatasetItem",
@@ -40,7 +45,7 @@ __all__ = [
     "CaptureUnavailable", "ManifestError", "MumbleSnapshot", "OcrFailure", "OcrScan", "OcrToken",
     "ObjectiveTextObservation", "OcrUnavailable", "PROMOTED_UI_PROFILES", "RedactionReceipt", "RegionLabel",
     "RegionMetrics", "RegionProposal",
-    "ReviewCandidateReceipt",
+    "PANEL_TITLES", "PanelObservation", "ReviewCandidateReceipt",
     "RevealDecision", "TesseractOcr", "TextSafetyDecision", "UI_PROFILE_REGION_BOXES",
     "VISIBLE_HUD_LABELS",
     "VisionObservation", "WindowIdentity",
@@ -54,6 +59,8 @@ __all__ = [
     "objective_text_to_vision",
     "parse_tesseract_tsv",
     "parse_wm_class", "persist_profile_crops", "propose_default_regions", "propose_profile_regions",
-    "reverse_reveal", "save_objective_observation", "save_review_candidate",
-    "save_batch_manifest", "select_exact_window", "structural_privacy_regions",
+    "recognize_panel_titles", "reverse_reveal", "save_objective_observation", "save_review_candidate",
+    "save_batch_manifest", "scan_panel_titles", "select_exact_window", "structural_privacy_regions",
+    "UiStateBaseline", "UiStateExample", "UiStateFeatures", "UiStateRecognition",
+    "extract_ui_state_features",
 ]

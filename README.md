@@ -16,6 +16,12 @@ promoted into Zenith:
 The first checked-in experiment is CPU-only. It validates the contract and the
 fail-closed fusion policy without downloading a model or reading a screen.
 
+Current research is now focused on semantic UI recognition. The first bounded
+task distinguishes whether an approved objectives, skill-bar, or minimap crop is
+present, absent, or uncertain. It is an abstaining evaluation baseline, not a
+production detector. Zenith App remains the owner of all live application and
+telemetry behavior.
+
 ## Run locally
 
 ```bash
@@ -31,3 +37,6 @@ the repository's declared dependencies rather than ambient system packages.
 See [docs/architecture.md](docs/architecture.md),
 [docs/data-policy.md](docs/data-policy.md), and
 [docs/experiment-contract.md](docs/experiment-contract.md).
+
+The first real semantic result is recorded in
+[Labnote 007](docs/labnotes/007-small-ui-panel-recognition.md).

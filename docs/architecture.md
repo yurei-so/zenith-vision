@@ -1,7 +1,10 @@
 # Architecture
 
 Zenith Vision is an experiment boundary, not a second game client and not yet a
-Zenith module.
+Zenith module. Zenith App owns the live relay, telemetry normalization, service
+lifecycle, maps, API integration, and user interface. Zenith Vision may emit
+versioned vision evidence for Zenith App to consume later; it does not own a
+daemon, a map, or telemetry/vision fusion in production.
 
 ```text
 MumbleLink relay -- authoritative state --+
@@ -19,7 +22,9 @@ other facts unavailable in telemetry. Reserved visual kinds are rejected even
 when telemetry is absent or stale: unavailable state must stay unavailable.
 
 The current adapter accepts the `PlayerSnapshot` JSON shape already emitted by
-Zenith's relay. Zenith Vision does not copy or control that relay.
+Zenith's relay. Zenith Vision does not copy or control that relay. The live
+one-shot runner and fusion helper are lab-only authority tests and must not grow
+polling loops, background lifecycle, or a second application backend.
 
 Default HUD geometry is a conservative crop proposal, not detector ground
 truth. Training labels must trace the actual visible UI extent on each reviewed
@@ -39,14 +44,20 @@ completeness, and disclosure-policy provenance. It does not OCR other crops or
 the full frame, and identifier-like or insufficiently confident results fail
 without output.
 
+The first semantic-vision targets are deliberately small: classify each approved
+HUD crop as `present`, `absent`, or `uncertain`, then recognize the allowlisted
+Inventory and Hero panel titles in a chat-masked central search area. Transparent
+CPU baselines precommit both tasks and their abstention behavior. Synthetic or
+single-frame success is plumbing evidence only; no state may be published until
+a separately reviewed real holdout meets a frozen promotion gate.
+
 ## Experimental progression
 
-1. Contract and fusion policy (current).
-2. Offline fixture ingestion with redaction and dataset manifests.
-3. UI-region and icon baselines with held-out evaluation.
-4. Window-scoped live observation under an explicit operator gate.
-5. Optional advice composition using structured context plus retrieval.
-6. Only after measured success: publish a stable observation contract that
+1. Contract, privacy, and crop boundaries (complete).
+2. UI presence/absence recognition with explicit abstention (current).
+3. Held-out recognition of a small predeclared set of UI states and icons.
+4. Optional advice composition using structured context plus retrieval.
+5. Only after measured success: publish a stable vision-evidence contract that
    Zenith may consume.
 
 No phase grants input control. GPU experiments enter through Agent Runtime and

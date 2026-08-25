@@ -46,12 +46,18 @@ class TextSafetyDecision:
 class TesseractOcr:
     """Bounded local OCR. Source pixels are written only to an owner-only temp file."""
 
-    def __init__(self, executable: str = "tesseract", timeout_seconds: float = 10.0) -> None:
+    def __init__(
+        self, executable: str = "tesseract", timeout_seconds: float = 10.0,
+        page_segmentation_mode: int = 6,
+    ) -> None:
         resolved = shutil.which(executable)
         if resolved is None:
             raise OcrUnavailable("tesseract executable is not installed")
         self.executable = resolved
         self.timeout_seconds = timeout_seconds
+        if page_segmentation_mode not in {6, 11}:
+            raise ValueError("page segmentation mode must be 6 or 11")
+        self.page_segmentation_mode = page_segmentation_mode
 
     def scan(self, image: Image.Image) -> OcrScan:
         with tempfile.TemporaryDirectory(prefix="zenith-vision-ocr-") as directory:
@@ -59,7 +65,7 @@ class TesseractOcr:
             image.convert("RGB").save(path, format="PNG")
             try:
                 result = subprocess.run(
-                    [self.executable, str(path), "stdout", "--psm", "6", "tsv"],
+                    [self.executable, str(path), "stdout", "--psm", str(self.page_segmentation_mode), "tsv"],
                     stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                     check=False, timeout=self.timeout_seconds, text=True,
                 )
