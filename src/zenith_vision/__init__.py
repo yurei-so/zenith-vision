@@ -9,12 +9,17 @@ from .ocr import (
     OcrFailure, OcrScan, OcrToken, OcrUnavailable, TesseractOcr,
     TextSafetyDecision, assess_text_safety, parse_tesseract_tsv,
 )
+from .capture import (
+    CaptureUnavailable, WindowIdentity, WindowSelectionError, XWindowCapture,
+    parse_wm_class, select_exact_window,
+)
 
 __all__ = [
     "BoundingBox", "DatasetItem", "DatasetManifest", "FusedObservation",
-    "ManifestError", "MumbleSnapshot", "OcrFailure", "OcrScan", "OcrToken",
+    "CaptureUnavailable", "ManifestError", "MumbleSnapshot", "OcrFailure", "OcrScan", "OcrToken",
     "OcrUnavailable", "RedactionReceipt", "RegionLabel", "RegionMetrics", "RegionProposal",
-    "RevealDecision", "TesseractOcr", "TextSafetyDecision", "VisionObservation",
+    "RevealDecision", "TesseractOcr", "TextSafetyDecision", "VisionObservation", "WindowIdentity",
+    "WindowSelectionError", "XWindowCapture",
     "assess_text_safety", "evaluate_regions", "fuse_observations", "parse_tesseract_tsv",
-    "propose_default_regions", "reverse_reveal",
+    "parse_wm_class", "propose_default_regions", "reverse_reveal", "select_exact_window",
 ]

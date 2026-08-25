@@ -9,8 +9,10 @@
 - [x] Add digest-bound dataset manifests and privacy intake checks.
 - [x] Add an independently testable reverse-reveal pixel boundary.
 - [x] Add a fail-closed local OCR verification contract.
-- [ ] Validate real Tesseract output after the operator installs the OS package.
-- [ ] Add selected-window identity verification before allowing real captures.
+- [x] Validate real Tesseract output after the operator installs the OS package.
+- [x] Add exact selected-window identity verification for XWayland captures.
+- [x] Run the ephemeral zero-reveal smoke against an operator-approved GW2 window.
+- [ ] Build a synthetic UI-region corpus and precommit the learned-detector gate.
 
 ## Perception experiments
 
