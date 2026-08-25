@@ -20,6 +20,7 @@ BATCHES = (
     STATE / "small-world-boss-001",
     STATE / "small-world-boss-002",
     STATE / "small-world-boss-dev-003",
+    STATE / "small-ui-inventory-negatives-dev-004",
 )
 
 
@@ -78,7 +79,7 @@ def run_fold(train_rows: list, test_rows: list, device: torch.device) -> dict[st
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.clamp(negatives / positives, min=0.5, max=4.0))
     optimizer = torch.optim.AdamW(model.classifier.parameters(), lr=8e-4, weight_decay=1e-3)
     model.train()
-    for _ in range(24):
+    for _ in range(18):
         for inputs, targets in train_loader:
             inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad(set_to_none=True)
@@ -110,7 +111,7 @@ def main() -> None:
     for held in range(len(batches)):
         training = [row for index, batch in enumerate(batches) if index != held for row in batch]
         folds.append({"held_batch": held + 1, **run_fold(training, batches[held], device)})
-    print(json.dumps({"experiment": "panel-transfer-baseline-v1", "device": device.type,
+    print(json.dumps({"experiment": "panel-transfer-baseline-v2", "device": device.type,
                       "backbone": "mobilenet_v3_small_frozen", "holdout_used": False,
                       "folds": folds}, separators=(",", ":")))
 

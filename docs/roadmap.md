@@ -27,6 +27,8 @@
 - [x] Evaluate and reject a compact global visual baseline on the frozen holdout.
 - [ ] Build localized Hero-header/icon-rail and Inventory-grid evidence.
 - [ ] Freeze a new holdout before evaluating the localized detector.
+- [x] Cross-validate a frozen-backbone MobileNet panel classifier through roostd.
+- [ ] Collect corrective Hero-negative and Inventory-only development scenes.
 - [ ] Freeze a real-holdout promotion gate before tuning the UI-state baseline.
 - [ ] Label varied present/absent examples for objectives, skill bar, and minimap.
 - [ ] Evaluate the frozen UI-state baseline on the real holdout.
