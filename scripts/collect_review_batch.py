@@ -33,7 +33,8 @@ while len(entries) < maximum_candidates and time.monotonic() < deadline:
     )
     frame = capture.capture(target)
     structurally_masked = mask_regions(frame, [
-        BoundingBox(0.0, 0.66, 0.35, 0.34),
+        # Leave a safety gap before the Normal skill-bar proposal at x=0.315.
+        BoundingBox(0.0, 0.66, 0.30, 0.34),
         BoundingBox(0.0, 0.0, 0.20, 0.43),
     ])
     fingerprint = difference_hash(structurally_masked)

@@ -47,6 +47,12 @@ class ReverseRevealTests(unittest.TestCase):
         self.assertEqual(result.getpixel((25, 75)), (0, 0, 0))
         self.assertEqual(result.getpixel((75, 75)), (250, 100, 50))
 
+    def test_chat_mask_can_leave_skill_bar_safety_gap(self) -> None:
+        source = Image.new("RGB", (1000, 1000), "white")
+        result = mask_regions(source, [BoundingBox(0.0, 0.66, 0.30, 0.34)])
+        self.assertEqual(result.getpixel((299, 900)), (0, 0, 0))
+        self.assertEqual(result.getpixel((315, 900)), (255, 255, 255))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -66,11 +66,17 @@ class AdmissionTests(unittest.TestCase):
             entries.append({"sequence": sequence, "candidate": candidate.name, "receipt": receipt.name,
                             "candidate_sha256": saved.candidate_sha256})
         save_batch_manifest(batch, entries, started_at="2026-08-25T00:00:00+00:00")
-        manifest_path = admit_review_batch(batch, root / "holdout")
+        manifest_path = admit_review_batch(
+            batch, root / "holdout", dataset_name="operator-normal-holdout-v1", ui_scale="normal",
+        )
         manifest = DatasetManifest.load(manifest_path)
         self.assertEqual(len(manifest.items), 2)
         self.assertTrue(all(item.labels_path is None and item.split == "test" for item in manifest.items))
-        self.assertEqual(json.loads((batch / "batch.json").read_text())["status"], "approved")
+        batch_raw = json.loads((batch / "batch.json").read_text())
+        self.assertEqual(batch_raw["status"], "approved")
+        self.assertEqual(batch_raw["dataset_name"], "operator-normal-holdout-v1")
+        self.assertEqual(batch_raw["ui_scale"], "normal")
+        self.assertEqual(json.loads(manifest_path.read_text())["ui_scale"], "normal")
 
 
 if __name__ == "__main__":

@@ -79,7 +79,13 @@ def admit_review_candidate(
     return manifest_path
 
 
-def admit_review_batch(batch_directory: Path, dataset_directory: Path) -> Path:
+def admit_review_batch(
+    batch_directory: Path,
+    dataset_directory: Path,
+    *,
+    dataset_name: str = "operator-holdout-v1",
+    ui_scale: str | None = None,
+) -> Path:
     """Admit one approved review batch as an unlabeled private test holdout."""
     batch_directory = batch_directory.resolve()
     dataset_directory = dataset_directory.resolve()
@@ -121,7 +127,7 @@ def admit_review_batch(batch_directory: Path, dataset_directory: Path) -> Path:
             "item_id": item_id, "admitted_at": now, "candidate_sha256": digest,
             "review_receipt": receipt_path.name, "consent": "explicit",
             "redaction_status": "verified", "license": "private-not-for-release",
-            "labels_verified": False,
+            "labels_verified": False, "ui_scale": ui_scale,
         }
         _write_private_json(admissions_directory / f"{item_id}.json", admission)
         manifest_items.append({
@@ -131,14 +137,14 @@ def admit_review_batch(batch_directory: Path, dataset_directory: Path) -> Path:
             "redaction_status": "verified", "split": "test",
         })
         receipt["dataset_admitted"] = True
-        receipt["dataset_name"] = "operator-holdout-v1"
+        receipt["dataset_name"] = dataset_name
         receipt["dataset_item_id"] = item_id
         receipt["admitted_at"] = now
         updates.append((receipt_path, receipt))
     manifest_path = dataset_directory / "manifest.json"
     _write_private_json(manifest_path, {
         "format": "zenith-vision.dataset-manifest", "version": 1,
-        "name": "operator-holdout-v1", "items": manifest_items,
+        "name": dataset_name, "ui_scale": ui_scale, "items": manifest_items,
     })
     os.chmod(dataset_directory, 0o700)
     DatasetManifest.load(manifest_path)
@@ -146,7 +152,8 @@ def admit_review_batch(batch_directory: Path, dataset_directory: Path) -> Path:
         _write_private_json(path, receipt)
     batch["status"] = "approved"
     batch["admitted_at"] = now
-    batch["dataset_name"] = "operator-holdout-v1"
+    batch["dataset_name"] = dataset_name
+    batch["ui_scale"] = ui_scale
     _write_private_json(batch_path, batch)
     return manifest_path
 

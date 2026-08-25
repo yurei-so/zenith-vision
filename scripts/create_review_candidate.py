@@ -13,7 +13,8 @@ target = select_exact_window(
 frame = capture.capture(target)
 scan = TesseractOcr().scan(frame)
 structurally_masked = mask_regions(frame, [
-    BoundingBox(0.0, 0.66, 0.35, 0.34),
+    # Leave a safety gap before the Normal skill-bar proposal at x=0.315.
+    BoundingBox(0.0, 0.66, 0.30, 0.34),
     BoundingBox(0.0, 0.0, 0.20, 0.43),
 ])
 candidate, receipt_path, receipt = save_review_candidate(
