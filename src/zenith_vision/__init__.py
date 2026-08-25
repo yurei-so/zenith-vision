@@ -27,9 +27,10 @@ from .collection import (
     create_contact_sheet, difference_hash, hamming_distance, is_distinct,
     save_batch_manifest, structural_privacy_regions,
 )
+from .blind_annotation import BLIND_LAYER_NAMES, create_blind_openraster, extract_blind_boxes
 
 __all__ = [
-    "BoundingBox", "DatasetItem", "DatasetManifest", "FusedObservation",
+    "BLIND_LAYER_NAMES", "BoundingBox", "DatasetItem", "DatasetManifest", "FusedObservation",
     "CaptureUnavailable", "ManifestError", "MumbleSnapshot", "OcrFailure", "OcrScan", "OcrToken",
     "OcrUnavailable", "RedactionReceipt", "RegionLabel", "RegionMetrics", "RegionProposal",
     "ReviewCandidateReceipt",
@@ -39,7 +40,8 @@ __all__ = [
     "WindowSelectionError", "XWindowCapture",
     "admit_review_batch", "admit_review_candidate", "approve_annotation_batch",
     "approve_annotation_proposal", "assess_text_safety",
-    "create_annotation_proposal", "create_contact_sheet", "difference_hash", "evaluate_regions",
+    "create_annotation_proposal", "create_blind_openraster", "create_contact_sheet",
+    "difference_hash", "evaluate_regions", "extract_blind_boxes",
     "fuse_observations", "generate_synthetic_corpus",
     "hamming_distance", "is_distinct", "mask_ocr_tokens", "mask_regions",
     "parse_tesseract_tsv",
