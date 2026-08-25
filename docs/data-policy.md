@@ -20,3 +20,12 @@ An operator-approved review candidate is not a dataset item. It is stored in an
 owner-only local state directory with a content digest and a receipt containing
 no OCR text. Admission requires a later explicit review decision; merely
 creating or viewing the candidate grants no training or transfer permission.
+
+Privacy approval admits the reviewed candidate only as an unlabeled private
+holdout. It does not make the image training-ready. The admission is bound to
+the candidate digest, original consent receipt, non-release license, structural
+mask policy, and an explicit `labels_verified: false` record.
+
+Geometry-seeded labels remain proposals until a human reviews a visual overlay.
+Masked chat and party/squad regions are excluded from the current proposal;
+privacy approval never implies annotation approval.

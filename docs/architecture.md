@@ -21,6 +21,10 @@ when telemetry is absent or stale: unavailable state must stay unavailable.
 The current adapter accepts the `PlayerSnapshot` JSON shape already emitted by
 Zenith's relay. Zenith Vision does not copy or control that relay.
 
+Default HUD geometry is a conservative crop proposal, not detector ground
+truth. Training labels must trace the actual visible UI extent on each reviewed
+item and carry their own review status.
+
 ## Experimental progression
 
 1. Contract and fusion policy (current).

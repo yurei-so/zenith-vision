@@ -15,15 +15,19 @@ from .capture import (
 )
 from .synthetic import generate_synthetic_corpus
 from .review import ReviewCandidateReceipt, save_review_candidate
+from .admission import admit_review_candidate
+from .annotation import VISIBLE_HUD_LABELS, create_annotation_proposal
 
 __all__ = [
     "BoundingBox", "DatasetItem", "DatasetManifest", "FusedObservation",
     "CaptureUnavailable", "ManifestError", "MumbleSnapshot", "OcrFailure", "OcrScan", "OcrToken",
     "OcrUnavailable", "RedactionReceipt", "RegionLabel", "RegionMetrics", "RegionProposal",
     "ReviewCandidateReceipt",
-    "RevealDecision", "TesseractOcr", "TextSafetyDecision", "VisionObservation", "WindowIdentity",
+    "RevealDecision", "TesseractOcr", "TextSafetyDecision", "VISIBLE_HUD_LABELS",
+    "VisionObservation", "WindowIdentity",
     "WindowSelectionError", "XWindowCapture",
-    "assess_text_safety", "evaluate_regions", "fuse_observations", "generate_synthetic_corpus",
+    "admit_review_candidate", "assess_text_safety", "create_annotation_proposal", "evaluate_regions",
+    "fuse_observations", "generate_synthetic_corpus",
     "mask_ocr_tokens", "mask_regions",
     "parse_tesseract_tsv",
     "parse_wm_class", "propose_default_regions", "reverse_reveal", "save_review_candidate",
