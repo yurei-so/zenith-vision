@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw
 
 
 def difference_hash(image: Image.Image) -> int:
-    pixels = list(image.convert("L").resize((9, 8), Image.Resampling.LANCZOS).getdata())
+    pixels = list(image.convert("L").resize((9, 8), Image.Resampling.LANCZOS).tobytes())
     value = 0
     for row in range(8):
         for column in range(8):
