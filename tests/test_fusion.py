@@ -28,6 +28,16 @@ class FusionTests(unittest.TestCase):
         self.assertEqual(result.player["map_id"], 15)  # type: ignore[index]
         self.assertEqual([item.label for item in result.visual], ["bleeding"])
         self.assertEqual(result.rejected_visual[0]["reason"], "reserved_for_telemetry")
+        self.assertNotIn("label", result.rejected_visual[0])
+
+    def test_accepted_visual_evidence_survives_fusion(self) -> None:
+        observation = VisionObservation(
+            "objective_text", "Complete the event", 0.9, "2026-08-24T12:00:00Z",
+            evidence={"disclosure_policy": "operator-approved-objectives-text-v1"},
+        )
+        result = fuse_observations(snapshot(), [observation], now=NOW)
+        self.assertEqual(result.visual[0].evidence["disclosure_policy"],
+                         "operator-approved-objectives-text-v1")  # type: ignore[index]
 
     def test_stale_telemetry_does_not_leak_state_or_enable_visual_guess(self) -> None:
         result = fuse_observations(snapshot(timestamp="2026-08-24T11:59:00Z"), [

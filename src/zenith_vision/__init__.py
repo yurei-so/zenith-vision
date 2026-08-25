@@ -29,7 +29,10 @@ from .collection import (
 )
 from .blind_annotation import BLIND_LAYER_NAMES, create_blind_openraster, extract_blind_boxes
 from .crop_runtime import PROMOTED_UI_PROFILES, CropArtifact, CropReceipt, persist_profile_crops
-from .objectives import ObjectiveTextObservation, interpret_objectives_crop, save_objective_observation
+from .objectives import (
+    ObjectiveTextObservation, interpret_objectives_crop, objective_text_to_vision,
+    save_objective_observation,
+)
 
 __all__ = [
     "BLIND_LAYER_NAMES", "BoundingBox", "CropArtifact", "CropReceipt", "DatasetItem",
@@ -48,6 +51,7 @@ __all__ = [
     "difference_hash", "evaluate_regions", "extract_blind_boxes",
     "fuse_observations", "generate_synthetic_corpus",
     "hamming_distance", "interpret_objectives_crop", "is_distinct", "mask_ocr_tokens", "mask_regions",
+    "objective_text_to_vision",
     "parse_tesseract_tsv",
     "parse_wm_class", "persist_profile_crops", "propose_default_regions", "propose_profile_regions",
     "reverse_reveal", "save_objective_observation", "save_review_candidate",

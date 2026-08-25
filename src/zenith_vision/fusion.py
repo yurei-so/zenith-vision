@@ -25,7 +25,7 @@ def fuse_observations(
     rejected: list[dict[str, str]] = []
     for observation in visual:
         if observation.kind.casefold() in AUTHORITATIVE_VISION_KINDS:
-            rejected.append({"kind": observation.kind, "label": observation.label, "reason": "reserved_for_telemetry"})
+            rejected.append({"kind": observation.kind, "reason": "reserved_for_telemetry"})
         else:
             accepted.append(observation)
     player = None

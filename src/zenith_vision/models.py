@@ -69,6 +69,7 @@ class VisionObservation:
     confidence: float
     captured_at: str
     box: BoundingBox | None = None
+    evidence: dict[str, str] | None = None
 
     def __post_init__(self) -> None:
         if not self.kind or not self.label:
@@ -76,6 +77,11 @@ class VisionObservation:
         if not 0.0 <= self.confidence <= 1.0:
             raise ValueError("confidence must be between 0 and 1")
         parse_timestamp(self.captured_at)
+        if self.evidence is not None and any(
+            not isinstance(key, str) or not key.strip() or not isinstance(value, str) or not value.strip()
+            for key, value in self.evidence.items()
+        ):
+            raise ValueError("vision evidence keys and values must be non-empty strings")
 
 
 @dataclass(frozen=True)

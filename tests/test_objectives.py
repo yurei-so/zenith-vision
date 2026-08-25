@@ -10,7 +10,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from zenith_vision import OcrFailure, OcrScan, OcrToken, interpret_objectives_crop, save_objective_observation
+from zenith_vision import OcrFailure, OcrScan, OcrToken, interpret_objectives_crop, objective_text_to_vision, save_objective_observation
 
 
 class FakeOcr:
@@ -71,6 +71,17 @@ class ObjectiveInterpreterTests(unittest.TestCase):
             path = save_objective_observation(observation, Path(directory) / "private/observation.json")
             self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o600)
             self.assertEqual(json.loads(path.read_text())["text"], "Complete the event")
+
+    def test_adapts_to_provenance_carrying_visual_observation(self) -> None:
+        objective = interpret_objectives_crop(
+            Image.new("RGB", (10, 10)), FakeOcr(OcrScan((
+                OcrToken("Complete", 0.9), OcrToken("the", 0.9), OcrToken("event", 0.9),
+            ), "fake", True)), captured_at="2026-08-25T00:00:00+00:00",
+            source_crop_sha256="e" * 64,
+        )
+        visual = objective_text_to_vision(objective)
+        self.assertEqual(visual.kind, "objective_text")
+        self.assertEqual(visual.evidence["source_crop_sha256"], "e" * 64)  # type: ignore[index]
 
 
 if __name__ == "__main__":

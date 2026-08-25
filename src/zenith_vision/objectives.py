@@ -9,7 +9,8 @@ from typing import Protocol
 
 from PIL import Image
 
-from .models import parse_timestamp
+from .layout import UI_PROFILE_REGION_BOXES
+from .models import VisionObservation, parse_timestamp
 from .ocr import OcrFailure, OcrScan
 
 
@@ -85,6 +86,23 @@ def save_objective_observation(observation: ObjectiveTextObservation, destinatio
     finally:
         temporary.unlink(missing_ok=True)
     return destination
+
+
+def objective_text_to_vision(observation: ObjectiveTextObservation) -> VisionObservation:
+    """Adapt private objectives text into the provenance-carrying fusion contract."""
+    return VisionObservation(
+        kind="objective_text", label=observation.text, confidence=observation.confidence,
+        captured_at=observation.captured_at,
+        box=UI_PROFILE_REGION_BOXES["normal"]["objectives"],
+        evidence={
+            "source_region": observation.source_region,
+            "source_crop_sha256": observation.source_crop_sha256,
+            "ocr_backend": observation.backend,
+            "disclosure_policy": observation.disclosure_policy,
+            "complete": str(observation.complete).lower(),
+            "retained_fraction": f"{observation.retained_fraction:.6f}",
+        },
+    )
 
 
 def _looks_like_disallowed_identifier(text: str) -> bool:
