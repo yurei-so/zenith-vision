@@ -4,10 +4,11 @@ from pathlib import Path
 
 from PIL import Image
 
-from zenith_vision import BoundingBox, DatasetManifest, RegionLabel, evaluate_regions, propose_default_regions
+from zenith_vision import BoundingBox, DatasetManifest, RegionLabel, evaluate_regions, propose_default_regions, propose_profile_regions
 
 parser = argparse.ArgumentParser()
 parser.add_argument("dataset_name")
+parser.add_argument("--ui-scale", choices=("small", "normal", "large"))
 args = parser.parse_args()
 dataset = Path.home() / ".local/state/zenith-vision/datasets" / args.dataset_name
 manifest = DatasetManifest.load(dataset / "manifest.json")
@@ -20,7 +21,10 @@ for item in manifest.items:
     raw = json.loads(Path(item.labels_path).read_text(encoding="utf-8"))
     labels = tuple(RegionLabel(row["kind"], BoundingBox(*row["box"])) for row in raw["regions"])
     with Image.open(item.media_path) as image:
-        proposals_for_item = propose_default_regions(*image.size)
+        proposals_for_item = (
+            propose_profile_regions(*image.size, ui_scale=args.ui_scale)
+            if args.ui_scale else propose_default_regions(*image.size)
+        )
     metrics = evaluate_regions(proposals_for_item, labels)
     matched += metrics.matched
     expected += metrics.expected
@@ -45,6 +49,7 @@ kind_results = {
 result = {
     "format": "zenith-vision.holdout-result", "version": 1,
     "dataset": manifest.name, "items": len(manifest.items),
+    "profile": args.ui_scale or "generic_default",
     "labels": expected, "matched": matched, "proposals_evaluated": proposed,
     "mean_iou": round(weighted_iou / expected, 6),
     "recall_at_50": round(matched / expected, 6),
