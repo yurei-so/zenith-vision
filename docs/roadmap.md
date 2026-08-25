@@ -26,13 +26,16 @@
 - [x] Freeze a recognition-disabled Small-UI panel holdout before visual-model training.
 - [x] Evaluate and reject a compact global visual baseline on the frozen holdout.
 - [x] Build localized Hero-header/icon-rail and Inventory-grid evidence.
-- [ ] Freeze a new holdout before evaluating the localized detector.
+- [x] Freeze and evaluate a new balanced holdout for the localized detector.
 - [x] Cross-validate a frozen-backbone MobileNet panel classifier through roostd.
 - [x] Collect corrective Hero-negative and Inventory-only development scenes.
 - [x] Reject the corrective frozen-backbone run after cross-batch confounding persisted.
 - [ ] Add class-specific, visually diverse negative development scenes.
 - [x] Freeze and pass a development-only calibration gate for localized panel evidence.
-- [ ] Package a final localized model with corpus, region-plan, threshold, and model provenance.
+- [x] Package the first localized candidate with corpus, region-plan, threshold, and model provenance.
+- [x] Reject the first localized candidate after Inventory-only failed the fresh holdout.
+- [ ] Collect new development-only Inventory scenes with independently varied position and environment.
+- [ ] Freeze a new development gate and a different fresh holdout for any successor candidate.
 - [ ] Freeze a real-holdout promotion gate before tuning the UI-state baseline.
 - [ ] Label varied present/absent examples for objectives, skill bar, and minimap.
 - [ ] Evaluate the frozen UI-state baseline on the real holdout.
