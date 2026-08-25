@@ -32,6 +32,12 @@ identity and withholds source frames, masked frames, and raw OCR text. Missing
 or stale telemetry never permits vision to guess world state. The snapshot is
 ephemeral output; Zenith Vision still owns no daemon or production lifecycle.
 
+The optional `zenith-vision.interpreted-scene` one-shot contract consumes that
+snapshot plus map metadata resolved by Zenith App. It emits only deterministic
+situation summaries, a bounded nearest-public-map-reference list, provenance,
+and explicit unknowns. It never calls a language model, accepts a prompt, or
+fetches ArenaNet directly; Zenith App remains the API policy and cache boundary.
+
 Default HUD geometry is a conservative crop proposal, not detector ground
 truth. Training labels must trace the actual visible UI extent on each reviewed
 item and carry their own review status.
@@ -62,7 +68,8 @@ a separately reviewed real holdout meets a frozen promotion gate.
 1. Contract, privacy, and crop boundaries (complete).
 2. UI presence/absence recognition with explicit abstention (current).
 3. Held-out recognition of a small predeclared set of UI states and icons.
-4. Optional advice composition using structured context plus retrieval.
+4. Deterministic advice composition using structured context plus Zenith-owned
+   public-map retrieval (one-shot experimental contract complete).
 5. Only after measured success: publish a stable vision-evidence contract that
    Zenith may consume.
 

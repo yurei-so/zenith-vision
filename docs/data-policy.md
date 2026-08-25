@@ -67,3 +67,9 @@ selected Guild Wars 2 window after complete structural masking of chat and
 party/squad zones. The recognizer may emit only predeclared panel kinds and
 confidence metadata; all other OCR tokens and panel contents are discarded.
 The initial allowlist is `inventory` and `hero`. Full frames remain ephemeral.
+
+Interpreted scenes may retain public map and point-of-interest names returned by
+Zenith App, bounded game-coordinate distances, allowlisted panel state, and
+deterministic guidance. They must not retain prompts, model completions, raw OCR,
+frames, or character identity. Retrieval errors are reduced to an error class;
+upstream response bodies are not copied into the interpreted result.

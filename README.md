@@ -22,6 +22,10 @@ present, absent, or uncertain. It is an abstaining evaluation baseline, not a
 production detector. Zenith App remains the owner of all live application and
 telemetry behavior.
 
+The latest one-shot experiment combines current MumbleLink state, allowlisted
+panel recognition, and map metadata served by Zenith App into deterministic
+situational guidance. It has no model prompt, polling loop, or second API client.
+
 ## Run locally
 
 ```bash
@@ -29,6 +33,13 @@ python3 -m venv .venv
 .venv/bin/pip install -e .
 python3 -m unittest discover -s tests -v
 ./scripts/run-experiment contract_smoke
+```
+
+With Guild Wars 2 and Zenith App's loopback relay already running, execute one
+ephemeral interpreted scene with:
+
+```bash
+./scripts/run-interpreted-scene-once
 ```
 
 The fixed runner prefers `.venv/bin/python` when present so Agent Runtime uses
