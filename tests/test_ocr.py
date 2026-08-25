@@ -6,7 +6,9 @@ from pathlib import Path
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from zenith_vision import OcrFailure, OcrScan, OcrToken, OcrUnavailable, TesseractOcr, assess_text_safety, parse_tesseract_tsv
+from PIL import Image
+
+from zenith_vision import BoundingBox, OcrFailure, OcrScan, OcrToken, OcrUnavailable, TesseractOcr, assess_text_safety, mask_ocr_tokens, parse_tesseract_tsv
 
 HEADER = "level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n"
 
@@ -15,6 +17,11 @@ class OcrSafetyTests(unittest.TestCase):
     def test_parses_tesseract_tokens_and_confidence(self) -> None:
         scan = parse_tesseract_tsv(HEADER + "5\t1\t1\t1\t1\t1\t0\t0\t10\t5\t96.5\tDodge\n")
         self.assertEqual(scan.tokens, (OcrToken("Dodge", 0.965),))
+
+    def test_parses_normalized_token_geometry(self) -> None:
+        scan = parse_tesseract_tsv(HEADER + "5\t1\t1\t1\t1\t1\t10\t20\t30\t40\t96\tDodge\n",
+                                   image_size=(100, 200))
+        self.assertEqual(scan.tokens[0].box, BoundingBox(0.1, 0.1, 0.3, 0.2))
 
     def test_rejects_unapproved_or_ambiguous_text(self) -> None:
         unknown = assess_text_safety(OcrScan((OcrToken("Account.1234", 0.99),), "fake", True))
@@ -48,6 +55,17 @@ class OcrSafetyTests(unittest.TestCase):
     def test_malformed_tsv_fails_closed(self) -> None:
         with self.assertRaises(OcrFailure):
             parse_tesseract_tsv("not\ta\tvalid\theader\n")
+
+    def test_masks_token_geometry_with_padding(self) -> None:
+        image = Image.new("RGB", (100, 100), "white")
+        scan = OcrScan((OcrToken("private", 0.99, BoundingBox(0.2, 0.3, 0.2, 0.1)),), "fake", True)
+        masked = mask_ocr_tokens(image, scan, padding_pixels=2)
+        self.assertEqual(masked.getpixel((20, 30)), (0, 0, 0))
+        self.assertEqual(masked.getpixel((50, 50)), (255, 255, 255))
+
+    def test_masking_without_geometry_fails_closed(self) -> None:
+        with self.assertRaisesRegex(OcrFailure, "geometry"):
+            mask_ocr_tokens(Image.new("RGB", (10, 10)), OcrScan((OcrToken("x", 1.0),), "fake", True))
 
 
 if __name__ == "__main__":

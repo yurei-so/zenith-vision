@@ -11,6 +11,8 @@ from typing import Iterable
 
 from PIL import Image
 
+from .models import BoundingBox
+
 
 class OcrUnavailable(RuntimeError):
     pass
@@ -24,6 +26,7 @@ class OcrFailure(RuntimeError):
 class OcrToken:
     text: str
     confidence: float
+    box: BoundingBox | None = None
 
 
 @dataclass(frozen=True)
@@ -64,10 +67,10 @@ class TesseractOcr:
                 raise OcrFailure("tesseract timed out") from error
             if result.returncode != 0:
                 raise OcrFailure(f"tesseract exited with status {result.returncode}")
-            return parse_tesseract_tsv(result.stdout)
+            return parse_tesseract_tsv(result.stdout, image_size=image.size)
 
 
-def parse_tesseract_tsv(value: str) -> OcrScan:
+def parse_tesseract_tsv(value: str, *, image_size: tuple[int, int] | None = None) -> OcrScan:
     try:
         rows = csv.DictReader(io.StringIO(value), delimiter="\t")
         if rows.fieldnames is None or not {"text", "conf"}.issubset(rows.fieldnames):
@@ -78,7 +81,8 @@ def parse_tesseract_tsv(value: str) -> OcrScan:
             if not text:
                 continue
             confidence = float(row.get("conf") or "-1") / 100.0
-            tokens.append(OcrToken(text=text, confidence=max(0.0, min(1.0, confidence))))
+            box = _parse_box(row, image_size) if image_size is not None else None
+            tokens.append(OcrToken(text=text, confidence=max(0.0, min(1.0, confidence)), box=box))
         return OcrScan(tokens=tuple(tokens), backend="tesseract", complete=True)
     except (csv.Error, TypeError, ValueError) as error:
         raise OcrFailure("invalid tesseract TSV output") from error
@@ -102,5 +106,43 @@ def assess_text_safety(
     return TextSafetyDecision(True, "ocr_clean", len(scan.tokens))
 
 
+def mask_ocr_tokens(
+    image: Image.Image, scan: OcrScan, *, padding_pixels: int = 4,
+    fill: tuple[int, int, int] = (0, 0, 0),
+) -> Image.Image:
+    """Mask every recognized token; fail closed when OCR geometry is incomplete."""
+    if not scan.complete:
+        raise OcrFailure("cannot mask an incomplete OCR scan")
+    if padding_pixels < 0 or padding_pixels > 100:
+        raise ValueError("padding_pixels must be between 0 and 100")
+    result = image.convert("RGB").copy()
+    from PIL import ImageDraw
+    draw = ImageDraw.Draw(result)
+    for token in scan.tokens:
+        if token.box is None:
+            raise OcrFailure("OCR token geometry is unavailable")
+        left = max(0, round(token.box.x * result.width) - padding_pixels)
+        top = max(0, round(token.box.y * result.height) - padding_pixels)
+        right = min(result.width, round((token.box.x + token.box.width) * result.width) + padding_pixels)
+        bottom = min(result.height, round((token.box.y + token.box.height) * result.height) + padding_pixels)
+        draw.rectangle((left, top, max(left, right - 1), max(top, bottom - 1)), fill=fill)
+    return result
+
+
 def _normalize(value: str) -> str:
     return " ".join(value.casefold().split())
+
+
+def _parse_box(row: dict[str, str | None], image_size: tuple[int, int]) -> BoundingBox:
+    width, height = image_size
+    if width <= 0 or height <= 0:
+        raise ValueError("image dimensions must be positive")
+    left = int(row.get("left") or "")
+    top = int(row.get("top") or "")
+    box_width = int(row.get("width") or "")
+    box_height = int(row.get("height") or "")
+    if left < 0 or top < 0 or box_width < 0 or box_height < 0:
+        raise ValueError("negative OCR geometry")
+    if left + box_width > width or top + box_height > height:
+        raise ValueError("OCR geometry exceeds the image")
+    return BoundingBox(left / width, top / height, box_width / width, box_height / height)

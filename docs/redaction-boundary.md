@@ -20,6 +20,11 @@ malformed output, backend failure, or timeout rejects the reveal. A clean OCR
 result still does not classify a region as safe: an independent region verifier
 must also approve it.
 
+Tesseract token geometry is normalized and validated against the source frame.
+The local masking pass obscures every recognized token with padding and fails
+closed if any token lacks valid geometry. This produces an in-memory candidate
+for human privacy review; it is not proof that OCR found every sensitive glyph.
+
 The initial XWayland adapter selects a window by the exact tuple of title,
 instance, and class, then revalidates the same identity immediately before and
 after capture. Raw pixels exist only in an owner-only temporary directory and
