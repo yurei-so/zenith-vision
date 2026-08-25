@@ -16,7 +16,10 @@ from .capture import (
 from .synthetic import generate_synthetic_corpus
 from .review import ReviewCandidateReceipt, save_review_candidate
 from .admission import admit_review_batch, admit_review_candidate
-from .annotation import VISIBLE_HUD_LABELS, approve_annotation_proposal, create_annotation_proposal
+from .annotation import (
+    VISIBLE_HUD_LABELS, approve_annotation_batch, approve_annotation_proposal,
+    create_annotation_proposal,
+)
 from .collection import create_contact_sheet, difference_hash, hamming_distance, is_distinct, save_batch_manifest
 
 __all__ = [
@@ -27,7 +30,8 @@ __all__ = [
     "RevealDecision", "TesseractOcr", "TextSafetyDecision", "VISIBLE_HUD_LABELS",
     "VisionObservation", "WindowIdentity",
     "WindowSelectionError", "XWindowCapture",
-    "admit_review_batch", "admit_review_candidate", "approve_annotation_proposal", "assess_text_safety",
+    "admit_review_batch", "admit_review_candidate", "approve_annotation_batch",
+    "approve_annotation_proposal", "assess_text_safety",
     "create_annotation_proposal", "create_contact_sheet", "difference_hash", "evaluate_regions",
     "fuse_observations", "generate_synthetic_corpus",
     "hamming_distance", "is_distinct", "mask_ocr_tokens", "mask_regions",

@@ -118,6 +118,33 @@ def approve_annotation_proposal(
     return labels_path
 
 
+def approve_annotation_batch(
+    dataset_directory: Path,
+    proposals_directory: Path,
+    *,
+    now: datetime | None = None,
+) -> tuple[Path, ...]:
+    """Approve exactly one pending proposal for every item in a dataset."""
+    dataset_directory = dataset_directory.resolve()
+    proposals_directory = proposals_directory.resolve()
+    manifest = DatasetManifest.load(dataset_directory / "manifest.json")
+    item_ids = tuple(item.item_id for item in manifest.items)
+    proposals: dict[str, Path] = {}
+    for path in sorted(proposals_directory.glob("*-proposal.json")):
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        item_id = raw.get("item_id")
+        if not isinstance(item_id, str) or item_id in proposals:
+            raise ManifestError("annotation batch contains a missing or duplicate item id")
+        proposals[item_id] = path
+    if set(proposals) != set(item_ids):
+        raise ManifestError("annotation batch must contain exactly one proposal per dataset item")
+    current = now or datetime.now(timezone.utc)
+    return tuple(
+        approve_annotation_proposal(dataset_directory, proposals[item_id], item_id=item_id, now=current)
+        for item_id in item_ids
+    )
+
+
 def _atomic_json(path: Path, value: object) -> None:
     temporary = path.with_name(f".{path.name}.tmp")
     try:

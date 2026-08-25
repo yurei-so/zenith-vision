@@ -10,7 +10,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from zenith_vision import BoundingBox, DatasetManifest, admit_review_candidate, approve_annotation_proposal, create_annotation_proposal, save_review_candidate
+from zenith_vision import BoundingBox, DatasetManifest, admit_review_batch, admit_review_candidate, approve_annotation_batch, approve_annotation_proposal, create_annotation_proposal, save_batch_manifest, save_review_candidate
 
 
 class AnnotationProposalTests(unittest.TestCase):
@@ -58,6 +58,31 @@ class AnnotationProposalTests(unittest.TestCase):
             self.assertEqual(json.loads(proposal.read_text())["status"], "approved")
             self.assertTrue(json.loads((dataset / "admissions/item.json").read_text())["labels_verified"])
             self.assertIsNotNone(DatasetManifest.load(dataset / "manifest.json").items[0].labels_path)
+
+    def test_approves_complete_annotation_batch(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            batch = root / "batch"
+            batch.mkdir()
+            entries = []
+            candidates = []
+            for sequence, color in enumerate(("navy", "teal"), start=1):
+                candidate, receipt, saved = save_review_candidate(
+                    Image.new("RGB", (100, 100), color), batch,
+                    source_title="Synthetic", source_instance="fixture", source_class="fixture",
+                    ocr_token_count=0, mask_policy="operator-trusted-gameplay-v1",
+                )
+                entries.append({"sequence": sequence, "candidate": candidate.name,
+                                "receipt": receipt.name, "candidate_sha256": saved.candidate_sha256})
+                candidates.append(candidate)
+            save_batch_manifest(batch, entries, started_at="2026-08-25T00:00:00+00:00")
+            dataset = root / "dataset"
+            admit_review_batch(batch, dataset)
+            for item in DatasetManifest.load(dataset / "manifest.json").items:
+                create_annotation_proposal(Path(item.media_path), dataset / "annotation-review", item_id=item.item_id)
+            labels = approve_annotation_batch(dataset, dataset / "annotation-review")
+            self.assertEqual(len(labels), 2)
+            self.assertTrue(all(item.labels_path for item in DatasetManifest.load(dataset / "manifest.json").items))
 
 
 if __name__ == "__main__":
