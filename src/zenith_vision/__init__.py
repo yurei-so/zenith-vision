@@ -13,6 +13,7 @@ from .capture import (
     CaptureUnavailable, WindowIdentity, WindowSelectionError, XWindowCapture,
     parse_wm_class, select_exact_window,
 )
+from .synthetic import generate_synthetic_corpus
 
 __all__ = [
     "BoundingBox", "DatasetItem", "DatasetManifest", "FusedObservation",
@@ -20,6 +21,7 @@ __all__ = [
     "OcrUnavailable", "RedactionReceipt", "RegionLabel", "RegionMetrics", "RegionProposal",
     "RevealDecision", "TesseractOcr", "TextSafetyDecision", "VisionObservation", "WindowIdentity",
     "WindowSelectionError", "XWindowCapture",
-    "assess_text_safety", "evaluate_regions", "fuse_observations", "parse_tesseract_tsv",
+    "assess_text_safety", "evaluate_regions", "fuse_observations", "generate_synthetic_corpus",
+    "parse_tesseract_tsv",
     "parse_wm_class", "propose_default_regions", "reverse_reveal", "select_exact_window",
 ]

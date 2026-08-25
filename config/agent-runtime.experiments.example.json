@@ -21,6 +21,16 @@
       "args": ["ui_layout_baseline"],
       "environment": {},
       "timeout_seconds": 30
+    },
+    {
+      "id": "zenith-vision.synthetic-corpus-smoke",
+      "display_name": "Zenith Vision synthetic corpus smoke",
+      "description": "Generate and validate a temporary text-free HUD corpus without operator pixels.",
+      "repository_root": "/home/USER/github/zenith-vision",
+      "executable": "/home/USER/github/zenith-vision/scripts/run-experiment",
+      "args": ["synthetic_corpus_smoke"],
+      "environment": {},
+      "timeout_seconds": 30
     }
   ]
 }

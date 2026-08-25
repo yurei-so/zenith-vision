@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 EXPERIMENTS = {
     "contract_smoke": ROOT / "experiments" / "contract_smoke" / "run.py",
     "ui_layout_baseline": ROOT / "experiments" / "ui_layout_baseline" / "run.py",
+    "synthetic_corpus_smoke": ROOT / "experiments" / "synthetic_corpus_smoke" / "run.py",
 }
 
 

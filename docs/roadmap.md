@@ -12,7 +12,8 @@
 - [x] Validate real Tesseract output after the operator installs the OS package.
 - [x] Add exact selected-window identity verification for XWayland captures.
 - [x] Run the ephemeral zero-reveal smoke against an operator-approved GW2 window.
-- [ ] Build a synthetic UI-region corpus and precommit the learned-detector gate.
+- [x] Build a deterministic, digest-bound synthetic UI-region corpus.
+- [ ] Precommit the learned-detector architecture and promotion gate.
 
 ## Perception experiments
 
