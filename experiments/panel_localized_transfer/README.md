@@ -5,6 +5,10 @@ header/icon-rail and Inventory-grid proposals. Independent multiple-instance
 classifier heads learn from sample-level labels and score only their matching
 region family.
 
+The current corpus includes the original four environment batches plus three
+new Inventory-only development batches staged at left, right, and center panel
+positions. Each position batch is independently held out in its own fold.
+
 The experiment performs leave-one-development-batch-out evaluation. Its
 promotion gate is frozen at 80% aggregate exact accuracy, at least 70% exact
 accuracy in every fold, and no class with more than 20% aggregate false calls

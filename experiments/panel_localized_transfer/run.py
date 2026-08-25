@@ -26,6 +26,9 @@ BATCHES = (
     STATE / "small-world-boss-002",
     STATE / "small-world-boss-dev-003",
     STATE / "small-ui-inventory-negatives-dev-004",
+    STATE / "small-ui-inventory-position-left-dev-005",
+    STATE / "small-ui-inventory-position-right-dev-006",
+    STATE / "small-ui-inventory-position-center-dev-007",
 )
 
 
@@ -179,7 +182,7 @@ def main() -> None:
     folds = [run_fold(samples, held, device) for held in range(len(BATCHES))]
     gate = promotion_gate(folds)
     candidate = package_candidate(samples, device) if gate["passed"] else None
-    print(json.dumps({"experiment": "panel-localized-transfer-v1", "device": device.type,
+    print(json.dumps({"experiment": "panel-localized-transfer-v2", "device": device.type,
                       "backbone": "mobilenet_v3_small_frozen", "threshold": THRESHOLD,
                       "holdout_used": False, "folds": folds, "promotion_gate": gate,
                       "candidate": candidate},
