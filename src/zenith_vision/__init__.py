@@ -20,7 +20,10 @@ from .annotation import (
     VISIBLE_HUD_LABELS, approve_annotation_batch, approve_annotation_proposal,
     create_annotation_proposal,
 )
-from .collection import create_contact_sheet, difference_hash, hamming_distance, is_distinct, save_batch_manifest
+from .collection import (
+    create_contact_sheet, difference_hash, hamming_distance, is_distinct,
+    save_batch_manifest, structural_privacy_regions,
+)
 
 __all__ = [
     "BoundingBox", "DatasetItem", "DatasetManifest", "FusedObservation",
@@ -37,5 +40,5 @@ __all__ = [
     "hamming_distance", "is_distinct", "mask_ocr_tokens", "mask_regions",
     "parse_tesseract_tsv",
     "parse_wm_class", "propose_default_regions", "reverse_reveal", "save_review_candidate",
-    "save_batch_manifest", "select_exact_window",
+    "save_batch_manifest", "select_exact_window", "structural_privacy_regions",
 ]

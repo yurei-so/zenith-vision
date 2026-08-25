@@ -1,3 +1,4 @@
+import argparse
 import json
 from pathlib import Path
 
@@ -5,7 +6,10 @@ from PIL import Image
 
 from zenith_vision import BoundingBox, DatasetManifest, RegionLabel, evaluate_regions, propose_default_regions
 
-dataset = Path.home() / ".local/state/zenith-vision/datasets/operator-holdout-v1"
+parser = argparse.ArgumentParser()
+parser.add_argument("dataset_name")
+args = parser.parse_args()
+dataset = Path.home() / ".local/state/zenith-vision/datasets" / args.dataset_name
 manifest = DatasetManifest.load(dataset / "manifest.json")
 matched = expected = proposed = 0
 weighted_iou = 0.0

@@ -65,7 +65,9 @@ class AdmissionTests(unittest.TestCase):
             )
             entries.append({"sequence": sequence, "candidate": candidate.name, "receipt": receipt.name,
                             "candidate_sha256": saved.candidate_sha256})
-        save_batch_manifest(batch, entries, started_at="2026-08-25T00:00:00+00:00")
+        save_batch_manifest(
+            batch, entries, started_at="2026-08-25T00:00:00+00:00", ui_scale="normal",
+        )
         manifest_path = admit_review_batch(
             batch, root / "holdout", dataset_name="operator-normal-holdout-v1", ui_scale="normal",
         )

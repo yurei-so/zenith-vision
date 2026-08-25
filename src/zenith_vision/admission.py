@@ -97,6 +97,9 @@ def admit_review_batch(
         raise ManifestError("unsupported review batch")
     if batch.get("status") != "pending_human_review":
         raise ManifestError("review batch is not pending human review")
+    captured_ui_scale = batch.get("ui_scale")
+    if captured_ui_scale is not None and captured_ui_scale != ui_scale:
+        raise ManifestError("review batch UI scale does not match dataset provenance")
     entries = batch.get("candidates")
     if not isinstance(entries, list) or not entries or len(entries) > 100:
         raise ManifestError("review batch candidate count is invalid")

@@ -47,3 +47,7 @@ labels, change the test split, or authorize training.
 When a stable HUD layout is shared across a reviewed batch, the same
 item-specific seed boxes may generate annotation proposals for every item. The
 boxed contact sheet must be approved before any proposal becomes a label file.
+
+The current UI-layout corpus intentionally covers the Guild Wars 2 Small,
+Normal, and Large UI profiles. The Larger/XL profile is explicitly out of scope
+and must not be inferred from adjacent profiles.

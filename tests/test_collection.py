@@ -9,7 +9,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from zenith_vision import create_contact_sheet, difference_hash, hamming_distance, is_distinct
+from zenith_vision import create_contact_sheet, difference_hash, hamming_distance, is_distinct, structural_privacy_regions
 
 
 class CollectionTests(unittest.TestCase):
@@ -33,6 +33,15 @@ class CollectionTests(unittest.TestCase):
             self.assertEqual(stat.S_IMODE(sheet.stat().st_mode), 0o600)
             with Image.open(sheet) as image:
                 self.assertEqual(image.size, (960, 298))
+
+    def test_large_profile_masks_taller_chat_without_reaching_skill_bar(self) -> None:
+        chat, _ = structural_privacy_regions("large")
+        self.assertEqual((chat.y, chat.height), (0.52, 0.48))
+        self.assertEqual(chat.x + chat.width, 0.30)
+
+    def test_unknown_ui_profile_fails_closed(self) -> None:
+        with self.assertRaisesRegex(ValueError, "unsupported UI scale"):
+            structural_privacy_regions("unknown")
 
 
 if __name__ == "__main__":

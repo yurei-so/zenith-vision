@@ -1,14 +1,20 @@
 from __future__ import annotations
 
+import argparse
 import json
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 from zenith_vision import (
-    BoundingBox, TesseractOcr, XWindowCapture, create_contact_sheet, difference_hash,
+    TesseractOcr, XWindowCapture, create_contact_sheet, difference_hash,
     is_distinct, mask_regions, save_batch_manifest, save_review_candidate, select_exact_window,
+    structural_privacy_regions,
 )
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--ui-scale", required=True, choices=("small", "normal", "large", "larger"))
+args = parser.parse_args()
 
 maximum_candidates = 12
 maximum_seconds = 600
@@ -32,11 +38,7 @@ while len(entries) < maximum_candidates and time.monotonic() < deadline:
         instance="steam_app_1284210", window_class="steam_app_1284210",
     )
     frame = capture.capture(target)
-    structurally_masked = mask_regions(frame, [
-        # Leave a safety gap before the Normal skill-bar proposal at x=0.315.
-        BoundingBox(0.0, 0.66, 0.30, 0.34),
-        BoundingBox(0.0, 0.0, 0.20, 0.43),
-    ])
+    structurally_masked = mask_regions(frame, structural_privacy_regions(args.ui_scale))
     fingerprint = difference_hash(structurally_masked)
     if is_distinct(fingerprint, accepted_hashes, minimum_distance=minimum_hash_distance):
         scan = ocr.scan(frame)
@@ -58,7 +60,9 @@ while len(entries) < maximum_candidates and time.monotonic() < deadline:
     if len(entries) < maximum_candidates:
         time.sleep(interval_seconds)
 
-manifest = save_batch_manifest(batch_directory, entries, started_at=started.isoformat())
+manifest = save_batch_manifest(
+    batch_directory, entries, started_at=started.isoformat(), ui_scale=args.ui_scale,
+)
 sheet = create_contact_sheet(
     [(f"{entry['sequence']:02d}", batch_directory / str(entry["candidate"])) for entry in entries],
     batch_directory / "contact-sheet.png",
