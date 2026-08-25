@@ -36,3 +36,9 @@ instance, and class, then revalidates the same identity immediately before and
 after capture. Raw pixels exist only in an owner-only temporary directory and
 are loaded into local memory before that directory is removed. Capture never
 uses the active window, screen coordinates, or emulated input.
+
+After independent blind validation, the promoted Normal crop runtime may retain
+only the three approved HUD crops in an owner-only directory. Its receipt stores
+profile provenance, normalized geometry, dimensions, and content digests, but no
+recognized text, full-frame digest, absolute path, or source pixels. Unsupported
+profiles fail closed before artifacts are written.

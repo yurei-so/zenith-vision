@@ -25,6 +25,13 @@ Default HUD geometry is a conservative crop proposal, not detector ground
 truth. Training labels must trace the actual visible UI extent on each reviewed
 item and carry their own review status.
 
+The independently validated Normal profile at 1920x1080 is promoted only as a
+runtime crop heuristic. The crop runtime persists exactly the objectives,
+skill-bar, and minimap crops plus a content-free digest receipt; it never writes
+the full source frame. Small and Large remain frozen experiment profiles, while
+Larger/XL is unsupported. No crop implies a semantic observation until a later
+interpreter produces separately verified structured evidence.
+
 ## Experimental progression
 
 1. Contract and fusion policy (current).
