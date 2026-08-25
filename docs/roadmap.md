@@ -28,7 +28,10 @@
 - [ ] Build localized Hero-header/icon-rail and Inventory-grid evidence.
 - [ ] Freeze a new holdout before evaluating the localized detector.
 - [x] Cross-validate a frozen-backbone MobileNet panel classifier through roostd.
-- [ ] Collect corrective Hero-negative and Inventory-only development scenes.
+- [x] Collect corrective Hero-negative and Inventory-only development scenes.
+- [x] Reject the corrective frozen-backbone run after cross-batch confounding persisted.
+- [ ] Add class-specific, visually diverse negative development scenes.
+- [ ] Freeze a development-only calibration gate for localized panel evidence.
 - [ ] Freeze a real-holdout promotion gate before tuning the UI-state baseline.
 - [ ] Label varied present/absent examples for objectives, skill bar, and minimap.
 - [ ] Evaluate the frozen UI-state baseline on the real holdout.
