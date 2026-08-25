@@ -29,3 +29,8 @@ mask policy, and an explicit `labels_verified: false` record.
 Geometry-seeded labels remain proposals until a human reviews a visual overlay.
 Masked chat and party/squad regions are excluded from the current proposal;
 privacy approval never implies annotation approval.
+
+An approved proposal becomes a separate digest-bound label file. The dataset
+manifest, admission record, and proposal status are updated to preserve the
+review chain; training and evaluation code reads labels only through that
+manifest reference.

@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw
 
 from .layout import DEFAULT_REGION_BOXES
 from .models import BoundingBox
+from .dataset import DatasetManifest, ManifestError, sha256_file
 
 
 VISIBLE_HUD_LABELS = ("objectives", "skill_bar", "minimap")
@@ -61,3 +62,67 @@ def create_annotation_proposal(
     os.chmod(overlay_path, 0o600)
     os.chmod(proposal_path, 0o600)
     return overlay_path, proposal_path
+
+
+def approve_annotation_proposal(
+    dataset_directory: Path,
+    proposal_path: Path,
+    *,
+    item_id: str,
+    now: datetime | None = None,
+) -> Path:
+    """Promote one reviewed proposal into the private dataset label chain."""
+    dataset_directory = dataset_directory.resolve()
+    proposal_path = proposal_path.resolve()
+    manifest_path = dataset_directory / "manifest.json"
+    admission_path = dataset_directory / "admissions" / f"{item_id}.json"
+    manifest_raw = json.loads(manifest_path.read_text(encoding="utf-8"))
+    proposal = json.loads(proposal_path.read_text(encoding="utf-8"))
+    admission = json.loads(admission_path.read_text(encoding="utf-8"))
+    if proposal.get("format") != "zenith-vision.annotation-proposal" or proposal.get("version") != 1:
+        raise ManifestError("unsupported annotation proposal")
+    if proposal.get("status") != "pending_human_review" or proposal.get("item_id") != item_id:
+        raise ManifestError("annotation proposal is not pending for this item")
+    items = [item for item in manifest_raw.get("items", []) if item.get("id") == item_id]
+    if len(items) != 1:
+        raise ManifestError("dataset item is missing or ambiguous")
+    media = dataset_directory / items[0]["media"]
+    if sha256_file(media) != proposal.get("media_sha256"):
+        raise ManifestError("annotation proposal media digest mismatch")
+    kinds = [item.get("kind") for item in proposal.get("labels", [])]
+    if kinds != list(VISIBLE_HUD_LABELS):
+        raise ManifestError("annotation proposal has unexpected labels")
+    for label in proposal["labels"]:
+        BoundingBox(*label["box"])
+    labels_directory = dataset_directory / "labels"
+    labels_directory.mkdir(mode=0o700, exist_ok=True)
+    labels_path = labels_directory / f"{item_id}.json"
+    current = now or datetime.now(timezone.utc)
+    labels_payload = {
+        "format": "zenith-vision.region-labels", "version": 1,
+        "item_id": item_id, "media_sha256": proposal["media_sha256"],
+        "verified_at": current.isoformat(), "source_proposal": proposal_path.name,
+        "regions": proposal["labels"],
+    }
+    _atomic_json(labels_path, labels_payload)
+    items[0]["labels"] = str(labels_path.relative_to(dataset_directory))
+    _atomic_json(manifest_path, manifest_raw)
+    admission["labels_verified"] = True
+    admission["labels_verified_at"] = current.isoformat()
+    admission["labels_path"] = str(labels_path.relative_to(dataset_directory))
+    _atomic_json(admission_path, admission)
+    proposal["status"] = "approved"
+    proposal["approved_at"] = current.isoformat()
+    _atomic_json(proposal_path, proposal)
+    DatasetManifest.load(manifest_path)
+    return labels_path
+
+
+def _atomic_json(path: Path, value: object) -> None:
+    temporary = path.with_name(f".{path.name}.tmp")
+    try:
+        temporary.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)

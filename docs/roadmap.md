@@ -14,6 +14,8 @@
 - [x] Run the ephemeral zero-reveal smoke against an operator-approved GW2 window.
 - [x] Build a deterministic, digest-bound synthetic UI-region corpus.
 - [ ] Precommit the learned-detector architecture and promotion gate.
+- [x] Reject broad default geometry as a detector on a verified real holdout.
+- [ ] Collect and review a small varied real holdout before selecting a model.
 
 ## Perception experiments
 

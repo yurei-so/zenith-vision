@@ -16,7 +16,7 @@ from .capture import (
 from .synthetic import generate_synthetic_corpus
 from .review import ReviewCandidateReceipt, save_review_candidate
 from .admission import admit_review_candidate
-from .annotation import VISIBLE_HUD_LABELS, create_annotation_proposal
+from .annotation import VISIBLE_HUD_LABELS, approve_annotation_proposal, create_annotation_proposal
 
 __all__ = [
     "BoundingBox", "DatasetItem", "DatasetManifest", "FusedObservation",
@@ -26,7 +26,8 @@ __all__ = [
     "RevealDecision", "TesseractOcr", "TextSafetyDecision", "VISIBLE_HUD_LABELS",
     "VisionObservation", "WindowIdentity",
     "WindowSelectionError", "XWindowCapture",
-    "admit_review_candidate", "assess_text_safety", "create_annotation_proposal", "evaluate_regions",
+    "admit_review_candidate", "approve_annotation_proposal", "assess_text_safety",
+    "create_annotation_proposal", "evaluate_regions",
     "fuse_observations", "generate_synthetic_corpus",
     "mask_ocr_tokens", "mask_regions",
     "parse_tesseract_tsv",

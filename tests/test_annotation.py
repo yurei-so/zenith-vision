@@ -10,7 +10,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from zenith_vision import BoundingBox, create_annotation_proposal
+from zenith_vision import BoundingBox, DatasetManifest, admit_review_candidate, approve_annotation_proposal, create_annotation_proposal, save_review_candidate
 
 
 class AnnotationProposalTests(unittest.TestCase):
@@ -41,6 +41,23 @@ class AnnotationProposalTests(unittest.TestCase):
             raw = json.loads(proposal.read_text())
             self.assertEqual(raw["method"], "item_specific_seed")
             self.assertEqual(raw["labels"][0]["box"], [0.8, 0.0, 0.2, 0.3])
+
+    def test_approves_labels_into_manifest_and_admission_chain(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            candidate, receipt, _ = save_review_candidate(
+                Image.new("RGB", (100, 100), "navy"), root / "review",
+                source_title="Synthetic", source_instance="fixture", source_class="fixture",
+                ocr_token_count=0, mask_policy="operator-trusted-gameplay-v1",
+            )
+            dataset = root / "dataset"
+            admit_review_candidate(candidate, receipt, dataset, item_id="item")
+            _, proposal = create_annotation_proposal(candidate, dataset / "annotation-review", item_id="item")
+            labels = approve_annotation_proposal(dataset, proposal, item_id="item")
+            self.assertTrue(labels.is_file())
+            self.assertEqual(json.loads(proposal.read_text())["status"], "approved")
+            self.assertTrue(json.loads((dataset / "admissions/item.json").read_text())["labels_verified"])
+            self.assertIsNotNone(DatasetManifest.load(dataset / "manifest.json").items[0].labels_path)
 
 
 if __name__ == "__main__":
