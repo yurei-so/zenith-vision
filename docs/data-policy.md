@@ -34,3 +34,8 @@ An approved proposal becomes a separate digest-bound label file. The dataset
 manifest, admission record, and proposal status are updated to preserve the
 review chain; training and evaluation code reads labels only through that
 manifest reference.
+
+Bounded collection sessions revalidate the exact window on every attempt,
+apply structural masks before retention, discard perceptual near-duplicates,
+and stop at both a candidate ceiling and a wall-clock deadline. A batch remains
+outside every dataset until its private contact sheet is approved.

@@ -17,6 +17,7 @@ from .synthetic import generate_synthetic_corpus
 from .review import ReviewCandidateReceipt, save_review_candidate
 from .admission import admit_review_candidate
 from .annotation import VISIBLE_HUD_LABELS, approve_annotation_proposal, create_annotation_proposal
+from .collection import create_contact_sheet, difference_hash, hamming_distance, is_distinct, save_batch_manifest
 
 __all__ = [
     "BoundingBox", "DatasetItem", "DatasetManifest", "FusedObservation",
@@ -27,10 +28,10 @@ __all__ = [
     "VisionObservation", "WindowIdentity",
     "WindowSelectionError", "XWindowCapture",
     "admit_review_candidate", "approve_annotation_proposal", "assess_text_safety",
-    "create_annotation_proposal", "evaluate_regions",
+    "create_annotation_proposal", "create_contact_sheet", "difference_hash", "evaluate_regions",
     "fuse_observations", "generate_synthetic_corpus",
-    "mask_ocr_tokens", "mask_regions",
+    "hamming_distance", "is_distinct", "mask_ocr_tokens", "mask_regions",
     "parse_tesseract_tsv",
     "parse_wm_class", "propose_default_regions", "reverse_reveal", "save_review_candidate",
-    "select_exact_window",
+    "save_batch_manifest", "select_exact_window",
 ]
