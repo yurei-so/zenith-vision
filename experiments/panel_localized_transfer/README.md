@@ -10,3 +10,9 @@ promotion gate is frozen at 80% aggregate exact accuracy, at least 70% exact
 accuracy in every fold, and no class with more than 20% aggregate false calls
 plus misses. It never reads a spent or future holdout and has no live capture or
 input-control capability.
+
+When and only when the frozen gate passes, the run trains final heads on all
+approved development batches and writes a content-addressed, owner-only JSON
+bundle under `~/.local/state/zenith-vision/models/localized-panel`. The bundle
+contains numeric weights and provenance digests only; it contains no pixels,
+labels, paths, or executable pickle content.

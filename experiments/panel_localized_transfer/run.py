@@ -12,7 +12,9 @@ from torch import nn
 from torchvision import transforms
 from torchvision.models import MobileNet_V3_Small_Weights, mobilenet_v3_small
 
+from zenith_vision.model_bundle import digest_panel_corpus, region_plan_digest, write_model_bundle
 from zenith_vision.panel_regions import crop_panel_regions
+from zenith_vision.panel_regions import panel_region_plan
 
 
 SEED = 20260825
@@ -144,15 +146,43 @@ def promotion_gate(folds: list[dict[str, object]]) -> dict[str, object]:
                              "maximum_class_error_rate": 0.20}}
 
 
+def package_candidate(samples: list[Sample], device: torch.device) -> dict[str, object]:
+    heads = [train_head(samples, index, device) for index in range(len(CLASSES))]
+    plan = [{"id": item.region_id, "evidence": item.evidence, "tile": item.tile,
+             "box": list(item.box)} for item in panel_region_plan()]
+    payload = {
+        "format": "zenith-vision.localized-panel-model", "version": 1,
+        "architecture": "mobilenet_v3_small_frozen_mil_linear_heads",
+        "backbone_weights": "MobileNet_V3_Small_Weights.DEFAULT",
+        "classes": list(CLASSES), "threshold": THRESHOLD,
+        "corpus_sha256": digest_panel_corpus(BATCHES),
+        "region_plan": plan, "region_plan_sha256": region_plan_digest(plan),
+        "heads": {
+            kind: {"weight": heads[index].weight.detach().cpu().flatten().tolist(),
+                   "bias": float(heads[index].bias.detach().cpu().item())}
+            for index, kind in enumerate(CLASSES)
+        },
+    }
+    path, sha256 = write_model_bundle(
+        Path.home() / ".local/state/zenith-vision/models/localized-panel", payload,
+    )
+    return {"format": payload["format"], "version": payload["version"],
+            "sha256": sha256, "file": path.name, "corpus_sha256": payload["corpus_sha256"],
+            "region_plan_sha256": payload["region_plan_sha256"]}
+
+
 def main() -> None:
     random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
     if torch.cuda.is_available(): torch.cuda.manual_seed_all(SEED)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     samples = embed_rows(device)
     folds = [run_fold(samples, held, device) for held in range(len(BATCHES))]
+    gate = promotion_gate(folds)
+    candidate = package_candidate(samples, device) if gate["passed"] else None
     print(json.dumps({"experiment": "panel-localized-transfer-v1", "device": device.type,
                       "backbone": "mobilenet_v3_small_frozen", "threshold": THRESHOLD,
-                      "holdout_used": False, "folds": folds, "promotion_gate": promotion_gate(folds)},
+                      "holdout_used": False, "folds": folds, "promotion_gate": gate,
+                      "candidate": candidate},
                      separators=(",", ":")))
 
 
