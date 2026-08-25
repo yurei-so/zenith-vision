@@ -51,6 +51,19 @@
       "args": [],
       "environment": {},
       "timeout_seconds": 1200
+    },
+    {
+      "id": "zenith-vision.panel-localized-holdout-snowy-002",
+      "display_name": "Zenith Vision snowy localized panel holdout",
+      "description": "One-use frozen evaluation of the deterministic candidate on the balanced snowy Claw of Jormag holdout.",
+      "repository_root": "/home/USER/github/zenith-vision",
+      "executable": "/home/USER/github/zenith-vision/scripts/run-panel-localized-holdout",
+      "args": [],
+      "environment": {
+        "ZENITH_LOCALIZED_MODEL": "/home/USER/.local/state/zenith-vision/models/localized-panel/panel-localized-bc155807a28aee1a.json",
+        "ZENITH_HOLDOUT_SEGMENTS": "small-ui-localized-holdout2-inventory-001,small-ui-localized-holdout2-hero-inventory-002,small-ui-localized-holdout2-hero-003,small-ui-localized-holdout2-closed-004"
+      },
+      "timeout_seconds": 300
     }
   ]
 }

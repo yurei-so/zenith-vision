@@ -10,18 +10,13 @@ from torch import nn
 from torchvision import transforms
 from torchvision.models import MobileNet_V3_Small_Weights, mobilenet_v3_small
 
+from zenith_vision.holdout_contract import resolve_holdout_directories
 from zenith_vision.model_bundle import digest_panel_corpus, load_model_bundle, region_plan_digest
 from zenith_vision.panel_regions import crop_panel_regions, panel_region_plan
 
 
 CLASSES = ("hero", "inventory")
 STATE = Path.home() / ".local/state/zenith-vision/panel-batches"
-HOLDOUTS = (
-    STATE / "small-ui-localized-holdout-inventory-001",
-    STATE / "small-ui-localized-holdout-hero-inventory-002",
-    STATE / "small-ui-localized-holdout-hero-003",
-    STATE / "small-ui-localized-holdout-closed-004",
-)
 
 
 def expected_plan() -> list[dict[str, object]]:
@@ -38,6 +33,10 @@ def evaluate() -> dict[str, object]:
     model_path_value = os.environ.get("ZENITH_LOCALIZED_MODEL")
     if not model_path_value:
         raise RuntimeError("ZENITH_LOCALIZED_MODEL is required")
+    holdout_names = os.environ.get("ZENITH_HOLDOUT_SEGMENTS")
+    if not holdout_names:
+        raise RuntimeError("ZENITH_HOLDOUT_SEGMENTS is required")
+    holdouts = resolve_holdout_directories(STATE, holdout_names)
     model_path = Path(model_path_value).resolve()
     allowed = (Path.home() / ".local/state/zenith-vision/models/localized-panel").resolve()
     if model_path.parent != allowed or model_path.is_symlink():
@@ -66,7 +65,7 @@ def evaluate() -> dict[str, object]:
     states: dict[str, dict[str, int]] = {}
     threshold = float(bundle["threshold"])
     with torch.inference_mode():
-        for directory in HOLDOUTS:
+        for directory in holdouts:
             labels = json.loads((directory / "labels.json").read_text(encoding="utf-8"))
             for row in labels["items"]:
                 actual_panels = set(row["panels"])
@@ -100,9 +99,9 @@ def evaluate() -> dict[str, object]:
     passed = exact / total >= 0.875 and min(state_accuracy.values()) >= 0.75
     passed = passed and all(value <= 0.125 for value in class_error_rates.values())
     return {
-        "experiment": "panel-localized-holdout-v1", "device": device.type, "holdout_used": True,
+        "experiment": "panel-localized-holdout-v2", "device": device.type, "holdout_used": True,
         "training_performed": False, "threshold": threshold, "model_sha256": model_sha256,
-        "holdout_sha256": digest_panel_corpus(HOLDOUTS), "count": total, "exact": exact,
+        "holdout_sha256": digest_panel_corpus(holdouts), "count": total, "exact": exact,
         "exact_accuracy": exact / total, "states": states, "state_accuracy": state_accuracy,
         "per_class": per_class, "class_error_rates": class_error_rates,
         "promotion_gate": {"passed": passed, "requirements": {
